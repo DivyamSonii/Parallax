@@ -153,8 +153,8 @@ class SoundEngine {
         this.ambientNodes.forEach(node => {
             try {
                 if (node.gain) node.gain.setTargetAtTime(0, t, 0.5);
-                if (node.stop) setTimeout(() => { try { node.stop(); } catch (e) { } }, 2000);
-            } catch (e) { }
+                if (node.stop) setTimeout(() => { try { node.stop(); } catch { /* ignore */ } }, 2000);
+            } catch { /* ignore */ }
         });
         this.ambientNodes = [];
         this.isAmbientPlaying = false;

@@ -1,0 +1,894 @@
+/* Sanctuary Crime Map & Fibonacci Series Telemetry CSS */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
+
+.scm-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: radial-gradient(circle at 50% 45%, #15110d 0%, #060504 100%);
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+    color: #e2dac9;
+    user-select: none;
+}
+
+/* Atmospheric Weather & Film Grain Overlays */
+.scm-ambient-fog {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 40% 50%, rgba(183, 143, 47, 0.05) 0%, transparent 70%);
+    z-index: 2;
+}
+
+.scm-scanlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.12),
+        rgba(0, 0, 0, 0.12) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    opacity: 0.45;
+    z-index: 3;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   HUD HEADER & CONTROLS TOOLBAR
+───────────────────────────────────────────────────────────── */
+.scm-hud-header {
+    position: absolute;
+    top: 14px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 35;
+    pointer-events: auto;
+    gap: 1rem;
+}
+
+.scm-title-card {
+    background: rgba(10, 8, 6, 0.94);
+    border: 1px solid rgba(183, 143, 47, 0.4);
+    padding: 0.6rem 1.2rem;
+    border-radius: 3px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+.scm-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.scm-badge-estate {
+    background: rgba(183, 143, 47, 0.18);
+    border: 1px solid rgba(183, 143, 47, 0.4);
+    color: #e6c875;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 2px;
+}
+
+.scm-main-title {
+    font-size: 1.05rem;
+    letter-spacing: 0.22em;
+    color: #dfd8a3;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(183, 143, 47, 0.3);
+}
+
+.scm-sub-title {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.6rem;
+    color: #b78f2f;
+    letter-spacing: 0.15em;
+    margin-top: 0.2rem;
+}
+
+.scm-controls-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* Vision Mode Toggle Buttons */
+.scm-vision-toggle {
+    display: flex;
+    background: rgba(12, 9, 7, 0.92);
+    border: 1px solid rgba(183, 143, 47, 0.3);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.scm-vision-btn {
+    background: transparent;
+    border: none;
+    border-right: 1px solid rgba(183, 143, 47, 0.2);
+    color: #8c7e62;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    padding: 0.45rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.scm-vision-btn:last-child {
+    border-right: none;
+}
+
+.scm-vision-btn:hover {
+    color: #dfd8a3;
+    background: rgba(183, 143, 47, 0.12);
+}
+
+.scm-vision-btn.active {
+    background: rgba(183, 143, 47, 0.25);
+    color: #fff;
+    font-weight: bold;
+    box-shadow: inset 0 0 8px rgba(183, 143, 47, 0.35);
+}
+
+/* Standard Toolbar Buttons */
+.scm-tool-btn {
+    background: rgba(12, 9, 7, 0.9);
+    border: 1px solid rgba(183, 143, 47, 0.3);
+    color: #cfc6b0;
+    font-family: 'Cinzel', serif;
+    font-size: 0.64rem;
+    letter-spacing: 0.14em;
+    padding: 0.45rem 0.85rem;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(6px);
+}
+
+.scm-tool-btn:hover {
+    background: rgba(183, 143, 47, 0.18);
+    border-color: #dfd8a3;
+    color: #fff;
+}
+
+.scm-tool-btn.active {
+    background: linear-gradient(to bottom, #725624, #3d2d11);
+    border-color: #b78f2f;
+    color: #dfd8a3;
+    box-shadow: 0 0 12px rgba(183, 143, 47, 0.35);
+}
+
+.scm-exit-btn {
+    border-color: rgba(231, 76, 60, 0.4);
+    color: #e74c3c;
+}
+
+.scm-exit-btn:hover {
+    background: rgba(231, 76, 60, 0.15);
+    border-color: #e74c3c;
+    color: #ff7675;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3D ISOMETRIC / 2D MAP STAGE VIEWPORT
+───────────────────────────────────────────────────────────── */
+.scm-viewport {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1400px;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.scm-board {
+    position: relative;
+    width: 950px;
+    height: 535px;
+    max-width: 94vw;
+    max-height: 82vh;
+    aspect-ratio: 847 / 477;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    border-radius: 5px;
+}
+
+.scm-board.view-3d {
+    transform: rotateX(46deg) rotateZ(-20deg) scale(0.92);
+}
+
+.scm-board.view-2d {
+    transform: rotateX(0deg) rotateZ(0deg) scale(1);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PRESERVED AUTHENTIC AERIAL IMAGE BASE LAYER
+───────────────────────────────────────────────────────────── */
+.scm-map-media {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(183, 143, 47, 0.4),
+        0 0 25px rgba(0, 0, 0, 0.9);
+    background: #000;
+}
+
+.scm-map-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: filter 0.6s ease;
+}
+
+/* Filter presets for preserved map */
+.scm-map-img.filter-standard {
+    filter: sepia(0.22) contrast(1.18) brightness(0.92) saturate(1.05);
+}
+
+.scm-map-img.filter-acoustic {
+    filter: sepia(0.55) hue-rotate(330deg) contrast(1.3) brightness(0.85);
+}
+
+.scm-map-img.filter-tactical {
+    filter: sepia(0.2) hue-rotate(185deg) contrast(1.35) brightness(0.72) saturate(0.85);
+}
+
+/* Aged Map Vignette & Inner Shadow */
+.scm-map-vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.7) 100%);
+    box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.9);
+}
+
+/* Border Coordinate Tick Marks */
+.scm-map-border-marks {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(183, 143, 47, 0.35);
+    pointer-events: none;
+}
+
+.scm-map-border-marks::before {
+    content: "A   ·   B   ·   C   ·   D   ·   E   ·   F   ·   G   ·   H";
+    position: absolute;
+    top: 6px;
+    left: 20px;
+    right: 20px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.58rem;
+    color: rgba(223, 216, 163, 0.5);
+    letter-spacing: 0.7em;
+    text-align: center;
+}
+
+/* Authentic Compass Rose */
+.scm-compass-rose {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    width: 32px;
+    height: 42px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(10, 8, 6, 0.85);
+    border: 1px solid rgba(183, 143, 47, 0.4);
+    border-radius: 3px;
+    padding: 0.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+}
+
+.scm-compass-pointer {
+    color: #e74c3c;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+.scm-compass-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    color: #dfd8a3;
+    font-weight: 700;
+}
+
+/* Scale Ruler */
+.scm-scale-bar {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    background: rgba(10, 8, 6, 0.88);
+    border: 1px solid rgba(183, 143, 47, 0.35);
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.scm-scale-ruler {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.55rem;
+    color: #dfd8a3;
+}
+
+.scm-scale-line {
+    width: 25px;
+    height: 2px;
+    background: #b78f2f;
+    display: inline-block;
+}
+
+.scm-scale-caption {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.5rem;
+    color: #8c7e62;
+    margin-top: 0.15rem;
+    letter-spacing: 0.1em;
+}
+
+/* Topographical Lat/Long Stamp */
+.scm-map-stamp {
+    position: absolute;
+    bottom: 14px;
+    left: 18px;
+    background: rgba(10, 8, 6, 0.88);
+    border: 1px solid rgba(183, 143, 47, 0.35);
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.55rem;
+    color: #dfd8a3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    letter-spacing: 0.1em;
+    pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   19Hz ACOUSTIC RESONANCE WAVE SIMULATION
+───────────────────────────────────────────────────────────── */
+.scm-acoustic-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 14;
+}
+
+.scm-acoustic-pulse {
+    fill: none;
+    stroke: #ff7675;
+    stroke-width: 1.8;
+    opacity: 0;
+    animation: acousticWaveExpand 3.2s infinite cubic-bezier(0.1, 0.7, 0.3, 1);
+}
+
+.scm-acoustic-pulse.pulse-1 { animation-delay: 0s; }
+.scm-acoustic-pulse.pulse-2 { animation-delay: 0.64s; }
+.scm-acoustic-pulse.pulse-3 { animation-delay: 1.28s; }
+.scm-acoustic-pulse.pulse-4 { animation-delay: 1.92s; }
+.scm-acoustic-pulse.pulse-5 { animation-delay: 2.56s; }
+
+@keyframes acousticWaveExpand {
+    0% {
+        r: 15px;
+        opacity: 0.95;
+        stroke-width: 2.5;
+        stroke: #e74c3c;
+    }
+    50% {
+        opacity: 0.65;
+        stroke: #f39c12;
+    }
+    100% {
+        r: 240px;
+        opacity: 0;
+        stroke-width: 0.8;
+        stroke: #f1c40f;
+    }
+}
+
+.scm-epicenter-glow {
+    animation: pulseEpicenter 2.4s infinite ease-in-out;
+}
+
+@keyframes pulseEpicenter {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50% { opacity: 0.75; transform: scale(1.04); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FIBONACCI GOLDEN SPIRAL & TELEMETRY SVG
+───────────────────────────────────────────────────────────── */
+.scm-fibonacci-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 16;
+}
+
+.scm-spiral-path {
+    stroke-dasharray: 1800;
+    stroke-dashoffset: 0;
+    animation: drawSpiral 2.8s ease-out;
+}
+
+@keyframes drawSpiral {
+    from { stroke-dashoffset: 1800; }
+    to { stroke-dashoffset: 0; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   INTERACTIVE MAP PINS (WITH 3D BILLBOARDING)
+───────────────────────────────────────────────────────────── */
+.scm-marker {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 25;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+/* Billboarding in 3D Isometric View so markers stand upright */
+.scm-board.view-3d .scm-marker {
+    transform-style: preserve-3d;
+}
+
+.scm-board.view-3d .scm-pin-content {
+    transform: rotateZ(20deg) rotateX(-46deg) translateZ(16px);
+    transform-origin: bottom center;
+    transition: transform 0.4s ease;
+}
+
+.scm-marker:hover .scm-pin-content {
+    transform: scale(1.18);
+}
+
+.scm-board.view-3d .scm-marker:hover .scm-pin-content {
+    transform: rotateZ(20deg) rotateX(-46deg) translateZ(24px) scale(1.22);
+}
+
+.scm-marker.selected .scm-pin-content {
+    transform: scale(1.25);
+    z-index: 30;
+}
+
+.scm-board.view-3d .scm-marker.selected .scm-pin-content {
+    transform: rotateZ(20deg) rotateX(-46deg) translateZ(28px) scale(1.3);
+    z-index: 30;
+}
+
+.scm-pin-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* Concentric Radar Ring */
+.scm-pin-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 38px;
+    height: 38px;
+    margin-top: -19px;
+    margin-left: -19px;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: markerRadarPulse 2.4s infinite ease-out;
+    pointer-events: none;
+}
+
+@keyframes markerRadarPulse {
+    0% { transform: scale(0.5); opacity: 0.85; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Badge Icon Container */
+.scm-pin-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #0d0a08;
+    border: 2px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    transition: all 0.25s ease;
+}
+
+.scm-pin-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* Tag Pill below Icon */
+.scm-pin-tag {
+    margin-top: 4px;
+    background: rgba(8, 6, 5, 0.94);
+    border: 1px solid rgba(183, 143, 47, 0.4);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
+    white-space: nowrap;
+}
+
+.scm-tag-code {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+}
+
+.scm-tag-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: #dfd8a3;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BOTTOM CATEGORY FILTER PILLS
+───────────────────────────────────────────────────────────── */
+.scm-filter-bar {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10, 8, 6, 0.94);
+    border: 1px solid rgba(183, 143, 47, 0.4);
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.95);
+    border-radius: 30px;
+    padding: 0.35rem 0.8rem;
+    display: flex;
+    gap: 0.4rem;
+    z-index: 35;
+    backdrop-filter: blur(8px);
+}
+
+.scm-filter-pill {
+    background: transparent;
+    border: none;
+    color: #8c7e62;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    padding: 0.4rem 0.85rem;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+}
+
+.scm-filter-pill:hover {
+    color: #dfd8a3;
+    background: rgba(183, 143, 47, 0.12);
+}
+
+.scm-filter-pill.active {
+    background: rgba(183, 143, 47, 0.28);
+    color: #dfd8a3;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(183, 143, 47, 0.25);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SLIDE-IN FORENSIC DOSSIER PANEL
+───────────────────────────────────────────────────────────── */
+.scm-dossier-panel {
+    position: absolute;
+    top: 75px;
+    right: 22px;
+    bottom: 75px;
+    width: 390px;
+    max-width: 90vw;
+    background: #0d0a08;
+    border: 1px solid rgba(183, 143, 47, 0.5);
+    box-shadow:
+        0 0 50px rgba(0, 0, 0, 0.98),
+        0 0 20px rgba(183, 143, 47, 0.2);
+    border-radius: 4px;
+    z-index: 45;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideInRight 0.35s ease;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.scm-dossier-header {
+    background: rgba(183, 143, 47, 0.12);
+    border-bottom: 1px solid rgba(183, 143, 47, 0.3);
+    padding: 0.9rem 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.scm-dossier-ref {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.6rem;
+    color: #b78f2f;
+    letter-spacing: 0.14em;
+}
+
+.scm-dossier-name {
+    font-size: 1.05rem;
+    letter-spacing: 0.14em;
+    color: #dfd8a3;
+    margin: 0.25rem 0 0 0;
+}
+
+.scm-close-dossier-btn {
+    background: transparent;
+    border: 1px solid rgba(183, 143, 47, 0.35);
+    color: #b78f2f;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.55rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+}
+
+.scm-close-dossier-btn:hover {
+    color: #fff;
+    border-color: #dfd8a3;
+    background: rgba(183, 143, 47, 0.2);
+}
+
+.scm-dossier-body {
+    padding: 1.2rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.scm-stamp-badge {
+    align-self: flex-start;
+    padding: 0.25rem 0.65rem;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    font-weight: 700;
+    border: 1px dashed;
+    border-radius: 2px;
+}
+
+.scm-section-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: #d4bc8b;
+    border-bottom: 1px solid rgba(183, 143, 47, 0.2);
+    padding-bottom: 0.35rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.scm-prose-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: #cfc6b0;
+    margin: 0;
+}
+
+/* Infrasound Tone Player Box */
+.scm-resonance-box {
+    background: rgba(243, 156, 18, 0.08);
+    border: 1px solid rgba(243, 156, 18, 0.35);
+    padding: 0.8rem;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.scm-resonance-title {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.65rem;
+    color: #f39c12;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.scm-resonance-desc {
+    font-size: 0.72rem;
+    color: #cfc6b0;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.scm-tone-btn {
+    background: rgba(243, 156, 18, 0.15);
+    border: 1px solid #f39c12;
+    color: #f39c12;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.65rem;
+    padding: 0.45rem 0.75rem;
+    cursor: pointer;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.scm-tone-btn:hover {
+    background: rgba(243, 156, 18, 0.3);
+    color: #fff;
+}
+
+.scm-tone-btn.playing {
+    background: #e74c3c;
+    border-color: #ff7675;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.6);
+    animation: tonePulse 1.2s infinite ease-in-out;
+}
+
+@keyframes tonePulse {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 0.6; }
+}
+
+/* Evidence List */
+.scm-evidence-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.scm-evidence-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(183, 143, 47, 0.18);
+    padding: 0.55rem 0.75rem;
+    border-radius: 3px;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+}
+
+.scm-ev-icon {
+    font-size: 1.1rem;
+    margin-top: 0.1rem;
+}
+
+.scm-ev-body {
+    flex: 1;
+}
+
+.scm-ev-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    color: #dfd8a3;
+}
+
+.scm-ev-tier {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.55rem;
+    color: #b78f2f;
+    border: 1px solid rgba(183, 143, 47, 0.3);
+    padding: 0.1rem 0.35rem;
+    border-radius: 2px;
+}
+
+.scm-ev-detail {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.65rem;
+    color: #8c7e62;
+    margin-top: 0.25rem;
+    line-height: 1.35;
+}
+
+/* Associated Suspects Chips */
+.scm-suspects-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.scm-suspect-chip {
+    background: rgba(183, 143, 47, 0.1);
+    border: 1px solid rgba(183, 143, 47, 0.3);
+    padding: 0.25rem 0.55rem;
+    font-size: 0.65rem;
+    font-family: 'Courier Prime', monospace;
+    color: #dfd8a3;
+    border-radius: 2px;
+}
+
+/* Timeline */
+.scm-timeline-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.scm-timeline-step {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.68rem;
+    color: #cfc6b0;
+    line-height: 1.45;
+    position: relative;
+    padding-left: 0.95rem;
+}
+
+.scm-timeline-step::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #b78f2f;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* Site Verdict Banner */
+.scm-verdict-banner {
+    padding: 0.65rem 0.85rem;
+    border-radius: 3px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-align: center;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE LAYOUT
+───────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .scm-hud-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    .scm-dossier-panel {
+        top: auto;
+        bottom: 70px;
+        height: 45vh;
+        left: 20px;
+        right: 20px;
+        width: auto;
+    }
+}

@@ -31,6 +31,26 @@ FALLBACK = {
         "amend": "I signed the initial certificate in good faith. The new evidence changes everything. I will amend the finding to homicide.",
         "eliza": "A 24-year-old botanist alone in a glass dome, counting petals she knew were deformed, with no idea what was happening to her heart. The amended report will reflect the truth."
     },
+        "intents": {
+        "alibi": "At the estimated time of death, between 6:00 and 10:00 PM, I was on duty at St. Jude's Hospital conducting post-mortem examinations on two vehicular trauma cases. The hospital administrator and two junior residents can confirm my schedule.",
+        "relationship": "I had no personal relationship with the deceased. My knowledge of Eliza D'Souza begins when her body arrived in the mortuary at 08:45 yesterday. She was a healthy 24-year-old female with no prior clinical pathology.",
+        "motive": "I am the county forensic pathologist, Detective. Asking about personal motive regarding an autopsy subject is scientifically preposterous and legally offensive. Let us adhere to medical evidence.",
+        "accusation": "Accusing the coroner? If you believe my initial finding of cardiac arrhythmia was premature, table the missing pathological variables! Accusations without histological data belong in cheap detective novels, not in a mortuary.",
+        "crime_scene": "The scene photographs indicate cyanosis in the distal extremities, petechial hemorrhages in the ocular conjunctiva, and severe pulmonary edema. These findings are consistent with acute hypoxic distress under elevated physical pressure, not simple sudden adult death.",
+        "procedural": "I signed the initial certificate based on standard toxicological screens. If you present documented evidence of tobacco alkaloid sensitization and resonant acoustic trauma, I will amend the finding from natural to homicide without hesitation.",
+    },
+    "role_confusion": {
+        "grounds": "Keypad access logs and door locks are matters for detective constables and security personnel, not the medical examiner. Consult the estate records.",
+        "aviary": "Parrot cages and aviary fixtures have no clinical relevance unless they carry forensic trace evidence. Show me histological or chemical data.",
+        "audio_hardware": "I assess thoracic tissue resonance and cardiac histology; the electronic schematics of the amplifiers are for Mr. Okafor to explain.",
+    },
+    "off_topic": [
+        "Detective, I have two active post-mortems waiting in the morgue and a suspicious death on my docket. Let us not indulge in non-sequiturs.",
+        "Medically, pathologically, and forensically speaking, that question has an impact factor of zero. Direct your inquiry to the physiological evidence.",
+        "I deal in blood gas analysis, tissue histology, and physical trauma. If you have a question regarding the mechanism of death, ask it. Otherwise, do not waste morgue hours.",
+        "Every minute we spend on irrelevancies allows tissue degradation and alkaloid breakdown to progress. Stick to the forensic facts.",
+        "Is this an investigative diversion? My clinical opinion requires empirical data, not conversational pleasantries. What specific finding do you wish to review?",
+    ],
     "dialogues": {
         "under_pressure": "I deal strictly in verifiable forensic pathology. Give me the physical evidence.",
         "breaks": "The mechanism is conclusively established. The amended certificate is signed. You have your homicide, Detective."

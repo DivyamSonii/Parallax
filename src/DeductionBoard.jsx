@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import './DeductionBoard.css';
 
 /* ─────────────────────────────────────────────────────────────
@@ -60,8 +60,6 @@ const DeductionBoard = ({ evidenceItems = [], onAccuse, onBack }) => {
         waltz: { x: 50, y: 93 },
     };
 
-    const unlockedEvidence = ALL_EVIDENCE.filter(ev => evidenceItems.includes(ev.id) || ev.id === 'crime-scene');
-
     const connectionsCount = connections.length;
     const uniqueSuspectsLinked = new Set(connections.map(c => c.suspect)).size;
     const canAccuse = connectionsCount >= 3 && uniqueSuspectsLinked >= 1;
@@ -91,8 +89,6 @@ const DeductionBoard = ({ evidenceItems = [], onAccuse, onBack }) => {
         }
         setSelectedEvidence(null);
     };
-
-    const isConnected = (evId, suspId) => connections.some(c => c.evidence === evId && c.suspect === suspId);
 
     return (
         <div className="db-container">

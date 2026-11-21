@@ -260,15 +260,6 @@ function CuratorApp() {
   const [userNotes, setUserNotes] = useState('')
   const [isNotebookOpen, setIsNotebookOpen] = useState(false)
 
-  // Auto-discover facts from personal notes
-  useEffect(() => {
-    if (!userNotes) return;
-    const newFactIds = discoverFactsFromText(userNotes, discoveredFacts);
-    if (newFactIds.length > 0) {
-      newFactIds.forEach(fid => addDiscoveredFact(fid));
-    }
-  }, [userNotes, discoveredFacts]);
-
   const addDiscoveredFact = useCallback((factId) => {
     setDiscoveredFacts(prev => {
       if (prev.includes(factId)) return prev
@@ -284,6 +275,15 @@ function CuratorApp() {
       return [...prev, evidenceId]
     })
   }, [])
+
+  // Auto-discover facts from personal notes
+  useEffect(() => {
+    if (!userNotes) return;
+    const newFactIds = discoverFactsFromText(userNotes, discoveredFacts);
+    if (newFactIds.length > 0) {
+      newFactIds.forEach(fid => addDiscoveredFact(fid));
+    }
+  }, [userNotes, discoveredFacts, addDiscoveredFact]);
 
   const incrementQuestions = () => setTotalQuestions(q => q + 1)
 

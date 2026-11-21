@@ -2,8 +2,8 @@
  * SecurityFootageViewer.jsx — Gallery CCTV Review Screen
  * Shows multiple camera feeds from the night of the murder
  */
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import SecurityFootage from './SecurityFootage';
 
 /* ── Camera feeds data ── */

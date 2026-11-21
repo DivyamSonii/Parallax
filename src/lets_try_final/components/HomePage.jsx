@@ -98,12 +98,12 @@ function Particles() {
     const particles = useMemo(() =>
         Array.from({ length: 40 }, (_, i) => ({
             id: i,
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            size: 1 + Math.random() * 2,
-            duration: 15 + Math.random() * 25,
-            delay: Math.random() * 10,
-            opacity: 0.1 + Math.random() * 0.3,
+            x: ((i * 37 + 13) % 100),
+            y: ((i * 53 + 29) % 100),
+            size: 1 + ((i * 7) % 3),
+            duration: 15 + ((i * 11) % 25),
+            delay: (i * 0.4) % 10,
+            opacity: 0.1 + ((i * 7) % 30) / 100,
         })), []);
 
     return (

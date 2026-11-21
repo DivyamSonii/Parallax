@@ -74,7 +74,7 @@ const SanctuaryScene = ({ onComplete, onEvidenceFound }) => {
     };
 
     const isVisible = (p) => phase === p;
-    const wasVisible = (p, ...others) => [p, ...others].includes(phase);
+    const _wasVisible = (p, ...others) => [p, ...others].includes(phase);
 
     return (
         <div className="ss-container">

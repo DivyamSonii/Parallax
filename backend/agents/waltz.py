@@ -31,6 +31,26 @@ FALLBACK = {
         "daisy": "18, 20, 32. I documented those myself. I thought the garden was responding to her. Coherence disrupted by something larger. Not — not by mechanical vibration. Not by a speaker in a vent.",
         "last": "The afternoon of her death. Three o'clock. We had our weekly session. I brought her tea, as I always did. I had no idea she would enter the sanctuary two hours later."
     },
+        "intents": {
+        "alibi": "Between 5:00 and 9:00 PM, I was in the university botanical library preparing lantern slides for my lecture on spiral phyllotaxis. The head librarian and two graduate fellows assisted me with the archival folios.",
+        "relationship": "Eliza was not merely a student; she was a botanical savant. Her perception of natural mathematical recurrence was unparalleled. I considered her my intellectual heir. Her sudden departure extinguishes a brilliant scientific future.",
+        "motive": "Motive? Preposterous! What motive could a Fellow of the Linnean Society harbor against his most brilliant protégé? Her publication would have secured our department's international renown!",
+        "accusation": "You dare bandy accusations of homicide against a Senior Fellow of the Botanical Society? My endeavors were devoted entirely to expanding her cognitive insight! To frame scientific inquiry as foul play is a slanderous absurdity!",
+        "crime_scene": "The sanctuary was an idealized greenhouse—a micro-environment constructed for empirical observation. To think that those pristine rows of Bellis perennis were subjected to unnatural vibrational disturbance... it sickens the scholarly soul.",
+        "procedural": "I demand that your inquiry adhere to basic forensic epistemology. If you have empirical data, table it. If you have conjectures, keep them to yourself.",
+    },
+    "role_confusion": {
+        "audio": "Acoustic hardware and electronic amplification are entirely outside my discipline. I am a botanist. Direct such queries to Mr. Okafor or Mr. Harlan.",
+        "smuggling": "Contraband diamonds? Preposterous. I concern myself with angiosperms and Fibonacci series, not illicit mineral trade. Speak to Carl.",
+        "medical": "I am a PhD in plant morphology, not a medical doctor. Dr. Menon is the forensic pathologist for human physiology.",
+    },
+    "off_topic": [
+        "Detective, that inquiry possesses zero empirical relevance to the biochemical or acoustic timeline of Miss D'Souza's death. Let us maintain scientific rigor.",
+        "A completely divergent non-sequitur. In systematic taxonomy, extraneous specimens are discarded immediately; I suggest you apply equal discipline to this homicide.",
+        "We stand before a profound tragedy of mathematical and physiological dimensions, and you squander our discourse on trivialities? Pray, return to the case.",
+        "I have dedicated my hours to analyzing petal anomalies and alkaloid interactions. I shall not divert my intellect to questions that bear no causal relationship to Eliza's fate.",
+        "Is this Scotland Yard's deductive method? Tossing tangential absurdities into the air hoping for a psychological reaction? Present forensic facts, Detective.",
+    ],
     "dialogues": {
         "under_pressure": "I am a botanist, Detective, not a murderer! Every daisy in that dome follows the sacred spiral!",
         "breaks": "Dear God... the low frequency... the chest resonance... My tea broke down her myocardial resistance. I made her a target... I thought I was giving her wings, and I killed her!"

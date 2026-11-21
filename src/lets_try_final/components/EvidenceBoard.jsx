@@ -356,8 +356,8 @@ export default function EvidenceBoard({ discoveredFacts = [], discoveredEvidence
             );
 
             if (!existing) {
-                const newConn = { from: selectedId, to: id, label: 'LINKED', id: Date.now() };
-                setUserConnections(prev => [...prev, newConn]);
+                const connId = `conn_${selectedId}_${id}`;
+                setUserConnections(prev => [...prev, { from: selectedId, to: id, label: 'LINKED', id: connId }]);
                 soundEngine.playDiscovery(); // Play a small "ding" for linking
             }
             setSelectedId(null);

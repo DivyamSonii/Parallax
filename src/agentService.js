@@ -102,3 +102,98 @@ export const sendMessage = async (agentAppName, sessionId, message) => {
         return null;
     }
 };
+
+// ─────────────────────────────────────────
+// FORENSIC EVIDENCE PRESENTATION
+// ─────────────────────────────────────────
+export const presentEvidenceToAgent = async (agentAppName, sessionId, evidenceId, evidenceLabel) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/evidence/present`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                appName: agentAppName,
+                sessionId,
+                evidenceId,
+                evidenceLabel
+            })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    } catch (err) {
+        console.warn(`[ADK] ✗ presentEvidenceToAgent: ${err.message}`);
+        return null;
+    }
+};
+
+// ─────────────────────────────────────────
+// INTELLIGENT HINTS API
+// ─────────────────────────────────────────
+export const requestHintFromAgent = async (evidenceItems = [], questionedSuspects = [], hintLevel = 1) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/hint`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ evidenceItems, questionedSuspects, hintLevel })
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    } catch (err) {
+        console.warn(`[ADK] ✗ requestHintFromAgent: ${err.message}`);
+        return null;
+    }
+};
+
+// ─────────────────────────────────────────
+// THEORIES EVALUATION API
+// ─────────────────────────────────────────
+export const evaluateTheoryWithAgent = async (theory) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/theories/evaluate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(theory)
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    } catch (err) {
+        console.warn(`[ADK] ✗ evaluateTheoryWithAgent: ${err.message}`);
+        return null;
+    }
+};
+
+// ─────────────────────────────────────────
+// INVESTIGATION PERFORMANCE REPORT API
+// ─────────────────────────────────────────
+export const generatePerformanceReportFromAgent = async (reportData) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/performance/report`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(reportData)
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    } catch (err) {
+        console.warn(`[ADK] ✗ generatePerformanceReportFromAgent: ${err.message}`);
+        return null;
+    }
+};
+
+// ─────────────────────────────────────────
+// DIGITAL SCAM LAB API
+// ─────────────────────────────────────────
+export const evaluateScamWithAgent = async (scamData) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/scam/evaluate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(scamData)
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+    } catch (err) {
+        console.warn(`[ADK] ✗ evaluateScamWithAgent: ${err.message}`);
+        return null;
+    }
+};

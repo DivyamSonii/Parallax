@@ -27,6 +27,26 @@ FALLBACK = {
         "smoke": "Perique tobacco has a rich, fermented plum aroma. I smoke my pipe in the dome in the quiet hours.",
         "air": "The vents were shut, yes. But a glasshouse has volume! How could that kill anyone?!"
     },
+        "intents": {
+        "alibi": "Between four and eight yesterday evening, I was secluded in my private study reviewing estate ledgers and export manifests for The Stellar. The butler served my tea at six. I never went near the eastern grounds after dusk.",
+        "relationship": "Eliza was everything to me, though her recent botanical obsession grew troubling. She became distant, consumed by petal sequences and strange anxieties. To have her taken under my own roof is a nightmare.",
+        "motive": "Motive? I am Arthur D'Souza, sole proprietor of this manor and partner in The Stellar. Eliza's life brought distinction to this family; her loss brings only anguish and scandal. I gained nothing from this atrocity.",
+        "accusation": "Mind your posture, Detective. You are leveling outrageous slurs in my own home. If you harbor formal charges, summon the magistrate. Otherwise, direct your energy toward the scoundrel who did this.",
+        "crime_scene": "The glass sanctuary was meant to be Eliza's sanctuary, a quiet retreat. Seeing the dome frosted with condensation and her body sprawled upon the tiles made my stomach turn. I could not bear to linger.",
+        "procedural": "I have afforded Scotland Yard every courtesy—access to my grounds, my staff, and my private papers. Do not test my patience with amateur theatrics.",
+    },
+    "role_confusion": {
+        "audio": "Acoustic engineering? Inquire with Mr. Harlan or his sound technicians. I manage an estate, not radio apparatus.",
+        "botany": "Botany was Professor Waltz's domain, not mine. Speak with the academic if you wish to discuss plant species.",
+        "medical": "I am a grieving husband, not a coroner. Direct your physiological questions to Dr. Menon.",
+    },
+    "off_topic": [
+        "Detective, my wife was found dead in the sanctuary dome only hours ago, and you are asking me about that? Have you lost all sense of propriety?",
+        "Is this some curious psychological tactic from the Yard? If you have pertinent questions regarding Eliza's death, ask them. Otherwise, let me mourn in peace.",
+        "I brought detectives onto my estate expecting sharp deduction, not frivolous parlor chatter while my wife's killer remains unpunished.",
+        "I refuse to indulge irrelevant digressions while this family is in mourning. Address the murder or conclude this meeting.",
+        "Look at the evidence on your table, Detective. A young woman suffocated under my roof. Ask a question with substance or summon my solicitor.",
+    ],
     "dialogues": {
         "under_pressure": "I built this estate! I loved Eliza! You dare suggest I would harm her?!",
         "breaks": "I closed those vents... I closed the dampers to keep Miriam's scent and the pipe smoke inside... My God, I sealed my own girl in an airtight tomb."

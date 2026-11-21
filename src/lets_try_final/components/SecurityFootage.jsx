@@ -12,18 +12,18 @@
  * - Fish-eye vignette
  * - Desaturated green tint
  */
-import { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 /* ── Helper: format CCTV timestamp ── */
 function useCCTVTime() {
-    const [now, setNow] = useState(Date.now());
-    const frameRef = useRef(0);
+    const [now, setNow] = useState(() => Date.now());
+    const [frameNum, setFrameNum] = useState(0);
 
     useEffect(() => {
         const iv = setInterval(() => {
             setNow(Date.now());
-            frameRef.current = (frameRef.current + 1) % 30;
+            setFrameNum(f => (f + 1) % 30);
         }, 33); // ~30fps update
         return () => clearInterval(iv);
     }, []);
@@ -32,7 +32,7 @@ function useCCTVTime() {
     const pad = (n, l = 2) => String(n).padStart(l, '0');
     const date = `${pad(d.getMonth() + 1)}/${pad(d.getDate())}/${d.getFullYear()}`;
     const time = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-    const frame = pad(frameRef.current);
+    const frame = pad(frameNum);
 
     return { date, time, frame };
 }
@@ -40,6 +40,7 @@ function useCCTVTime() {
 /* ── VHS Glitch Line ── */
 function GlitchLine() {
     const [pos, setPos] = useState(-10);
+    const [height, setHeight] = useState(4);
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
@@ -48,6 +49,7 @@ function GlitchLine() {
             setTimeout(() => {
                 setVisible(true);
                 setPos(Math.random() * 100);
+                setHeight(2 + Math.random() * 4);
                 setTimeout(() => setVisible(false), 80 + Math.random() * 120);
                 trigger();
             }, delay);
@@ -60,7 +62,7 @@ function GlitchLine() {
     return (
         <div style={{
             position: 'absolute', left: 0, right: 0,
-            top: `${pos}%`, height: 2 + Math.random() * 4,
+            top: `${pos}%`, height: height,
             background: 'rgba(255,255,255,0.08)',
             zIndex: 15, pointerEvents: 'none',
             boxShadow: '0 0 10px rgba(255,255,255,0.05)',

@@ -1,0 +1,670 @@
+/* Digital Scam Lab Enhanced CSS with 3-Step Wizard Navigation */
+.dsl-container {
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 50% 10%, #16100b 0%, #060504 100%);
+    color: #e2dac9;
+    font-family: 'Cinzel', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 2rem;
+}
+
+/* Top Header */
+.dsl-top-bar {
+    width: 1080px;
+    max-width: 96vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(183, 143, 47, 0.3);
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+}
+
+.dsl-title-wrap h1 {
+    font-size: 1.3rem;
+    letter-spacing: 0.22em;
+    color: #dfd8a3;
+    margin: 0;
+    text-shadow: 0 0 10px rgba(183, 143, 47, 0.3);
+}
+
+.dsl-badge-sub {
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    color: #b78f2f;
+    letter-spacing: 0.15em;
+    margin-top: 0.2rem;
+}
+
+.dsl-back-btn {
+    background: transparent;
+    border: 1px solid rgba(183, 143, 47, 0.4);
+    color: #d4bc8b;
+    padding: 0.45rem 1rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 2px;
+}
+
+.dsl-back-btn:hover {
+    background: rgba(183, 143, 47, 0.2);
+    border-color: #dfd8a3;
+    color: #fff;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3-STEP NAVIGATION STEPPER TABS
+   Guarantees Step 1, Step 2, and Step 3 are always 100% visible
+───────────────────────────────────────────────────────────── */
+.dsl-stepper-bar {
+    width: 1080px;
+    max-width: 96vw;
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
+}
+
+.dsl-step-tab {
+    flex: 1;
+    background: rgba(15, 12, 9, 0.85);
+    border: 1px solid rgba(183, 143, 47, 0.25);
+    border-radius: 4px;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.25s ease;
+    text-align: left;
+}
+
+.dsl-step-tab:hover {
+    border-color: #b78f2f;
+    background: rgba(25, 20, 15, 0.95);
+}
+
+.dsl-step-tab.active {
+    border-color: #dfd8a3;
+    background: linear-gradient(135deg, rgba(183, 143, 47, 0.2), rgba(20, 16, 12, 0.95));
+    box-shadow: 0 0 15px rgba(183, 143, 47, 0.3);
+}
+
+.dsl-step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(183, 143, 47, 0.15);
+    border: 1px solid #b78f2f;
+    color: #dfd8a3;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.dsl-step-tab.active .dsl-step-num {
+    background: #b78f2f;
+    color: #0d0a08;
+    box-shadow: 0 0 10px rgba(183, 143, 47, 0.5);
+}
+
+.dsl-step-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.dsl-step-tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: #dfd8a3;
+    font-weight: bold;
+}
+
+.dsl-step-desc {
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    color: #8c7e62;
+    margin-top: 0.15rem;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STAGE CONTENT CONTAINERS
+───────────────────────────────────────────────────────────── */
+.dsl-stage-wrapper {
+    width: 1080px;
+    max-width: 96vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeIn 0.3s ease;
+}
+
+/* STEP 1: Two Column Layout */
+.dsl-step1-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 880px) {
+    .dsl-step1-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mail Client Interface */
+.dsl-mail-window {
+    background: #0d0a08;
+    border: 1px solid rgba(183, 143, 47, 0.35);
+    border-radius: 4px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.dsl-mail-header {
+    background: rgba(183, 143, 47, 0.08);
+    border-bottom: 1px solid rgba(183, 143, 47, 0.2);
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.76rem;
+}
+
+.dsl-field-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+}
+
+.dsl-field-lbl {
+    color: #8c7e62;
+    min-width: 65px;
+    font-weight: bold;
+}
+
+.dsl-field-val {
+    color: #e5ded0;
+}
+
+.dsl-interactive-flag {
+    cursor: pointer;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    border-bottom: 1px dashed #b78f2f;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.dsl-interactive-flag:hover {
+    background: rgba(183, 143, 47, 0.25);
+    color: #fff;
+}
+
+.dsl-interactive-flag.flagged {
+    background: rgba(231, 76, 60, 0.28);
+    border-bottom: 2px solid #e74c3c;
+    color: #ff9999;
+}
+
+.dsl-mail-body {
+    padding: 1.4rem;
+    font-family: 'Georgia', serif;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: #d1c8b4;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.dsl-tooltip-link {
+    position: relative;
+    color: #5dade2;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.dsl-tooltip-link:hover::after {
+    content: attr(data-real-url);
+    position: absolute;
+    bottom: 125%;
+    left: 0;
+    background: #000;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.68rem;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+}
+
+/* Sidebar / Checklist */
+.dsl-sidebar-panel {
+    background: #0c0907;
+    border: 1px solid rgba(183, 143, 47, 0.25);
+    border-radius: 4px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.dsl-panel-title {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    color: #dfd8a3;
+    border-bottom: 1px solid rgba(183, 143, 47, 0.15);
+    padding-bottom: 0.5rem;
+    margin: 0;
+}
+
+.dsl-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.dsl-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 0.45rem 0.6rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-left: 2px solid transparent;
+}
+
+.dsl-check-item:hover {
+    background: rgba(183, 143, 47, 0.12);
+}
+
+.dsl-check-item.active {
+    background: rgba(231, 76, 60, 0.12);
+    border-left-color: #e74c3c;
+}
+
+.dsl-check-item input[type="checkbox"] {
+    margin-top: 0.15rem;
+    accent-color: #b78f2f;
+    cursor: pointer;
+}
+
+.dsl-check-text {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    color: #cfc6b0;
+    line-height: 1.35;
+}
+
+/* Navigation button rows */
+.dsl-nav-action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(15, 12, 9, 0.7);
+    border: 1px solid rgba(183, 143, 47, 0.2);
+    padding: 0.8rem 1.2rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.dsl-next-btn {
+    background: linear-gradient(to bottom, #725624, #3d2d11);
+    border: 1px solid #b78f2f;
+    color: #dfd8a3;
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    padding: 0.55rem 1.4rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+}
+
+.dsl-next-btn:hover {
+    background: linear-gradient(to bottom, #8f6c2d, #523c17);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(183, 143, 47, 0.4);
+}
+
+.dsl-prev-btn {
+    background: transparent;
+    border: 1px solid rgba(183, 143, 47, 0.4);
+    color: #b78f2f;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+}
+
+.dsl-prev-btn:hover {
+    background: rgba(183, 143, 47, 0.15);
+    color: #dfd8a3;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STEP 2: SECONDARY VERIFICATION STAGE
+───────────────────────────────────────────────────────────── */
+.dsl-step2-card {
+    background: #0d0a08;
+    border: 1px solid rgba(183, 143, 47, 0.35);
+    border-radius: 4px;
+    padding: 1.8rem 2.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.dsl-step2-headline {
+    font-size: 1.1rem;
+    color: #dfd8a3;
+    letter-spacing: 0.18em;
+    margin: 0;
+}
+
+.dsl-step2-prose {
+    font-family: 'Georgia', serif;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #cfc6b0;
+    margin: 0;
+}
+
+.dsl-dial-action-box {
+    background: rgba(20, 16, 12, 0.8);
+    border: 1px dashed rgba(183, 143, 47, 0.4);
+    padding: 1.4rem;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.dsl-big-dial-btn {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.25), rgba(41, 128, 185, 0.1));
+    border: 1px solid #3498db;
+    color: #85c1e9;
+    padding: 0.9rem 2rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.dsl-big-dial-btn:hover {
+    background: rgba(52, 152, 219, 0.35);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.4);
+}
+
+.dsl-verify-result-box {
+    width: 100%;
+    background: rgba(243, 156, 18, 0.08);
+    border-left: 4px solid #f39c12;
+    padding: 1.2rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.78rem;
+    color: #f39c12;
+    line-height: 1.5;
+    text-align: left;
+    border-radius: 0 3px 3px 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STEP 3: FINAL FORENSIC VERDICT STAGE
+   Prominently featured, beautiful, and impossible to miss
+───────────────────────────────────────────────────────────── */
+.dsl-step3-card {
+    background: #0d0a08;
+    border: 1px solid #b78f2f;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.95), 0 0 20px rgba(183, 143, 47, 0.25);
+    border-radius: 4px;
+    padding: 2rem 2.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+.dsl-step3-title-row {
+    border-bottom: 1px solid rgba(183, 143, 47, 0.25);
+    padding-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dsl-step3-title {
+    font-size: 1.25rem;
+    letter-spacing: 0.2em;
+    color: #dfd8a3;
+    margin: 0;
+}
+
+/* Telemetry Summary Cards in Step 3 */
+.dsl-summary-cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.dsl-telemetry-badge-card {
+    background: rgba(20, 16, 12, 0.75);
+    border: 1px solid rgba(183, 143, 47, 0.25);
+    padding: 0.9rem 1.1rem;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.dsl-telemetry-lbl {
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    color: #b78f2f;
+    letter-spacing: 0.15em;
+}
+
+.dsl-telemetry-val {
+    font-size: 0.85rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Big Verdict Cards in Step 3 */
+.dsl-verdict-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+.dsl-big-verdict-option {
+    background: rgba(18, 14, 10, 0.85);
+    border: 2px solid rgba(183, 143, 47, 0.3);
+    padding: 1.3rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all 0.25s ease;
+    text-align: left;
+}
+
+.dsl-big-verdict-option:hover {
+    border-color: #dfd8a3;
+    background: rgba(28, 22, 16, 0.9);
+}
+
+.dsl-big-verdict-option.selected.scam {
+    border-color: #e74c3c;
+    background: rgba(231, 76, 60, 0.18);
+    box-shadow: 0 0 25px rgba(231, 76, 60, 0.35);
+}
+
+.dsl-big-verdict-option.selected.legit {
+    border-color: #2ecc71;
+    background: rgba(46, 204, 113, 0.18);
+    box-shadow: 0 0 25px rgba(46, 204, 113, 0.35);
+}
+
+.dsl-option-header {
+    font-size: 0.92rem;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.dsl-option-header.scam { color: #ff8585; }
+.dsl-option-header.legit { color: #82e0aa; }
+
+.dsl-option-desc {
+    font-family: 'Georgia', serif;
+    font-size: 0.82rem;
+    color: #cfc6b0;
+    line-height: 1.5;
+}
+
+/* Master Submission Button */
+.dsl-master-submit-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(to bottom, #725624, #3d2d11);
+    border: 1px solid #b78f2f;
+    color: #dfd8a3;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.24em;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.25s ease;
+    width: 100%;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+.dsl-master-submit-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, #8f6c2d, #523c17);
+    color: #fff;
+    box-shadow: 0 0 25px rgba(183, 143, 47, 0.5);
+}
+
+.dsl-master-submit-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DEBRIEF MODAL
+───────────────────────────────────────────────────────────── */
+.dsl-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 1, 3, 0.94);
+    backdrop-filter: blur(10px);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.dsl-debrief-modal {
+    width: 760px;
+    max-width: 95vw;
+    max-height: 90vh;
+    background: #0d0a08;
+    border: 1px solid #b78f2f;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.95), 0 0 30px rgba(183, 143, 47, 0.25);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 1.8rem 2.2rem;
+    gap: 1.4rem;
+}
+
+.dsl-debrief-header {
+    border-bottom: 1px solid rgba(183, 143, 47, 0.3);
+    padding-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dsl-debrief-title {
+    font-size: 1.15rem;
+    color: #dfd8a3;
+    letter-spacing: 0.2em;
+    margin: 0;
+}
+
+.dsl-score-badge {
+    font-family: 'Special Elite', monospace;
+    font-size: 1.7rem;
+    color: #2ecc71;
+}
+
+.dsl-score-badge.fail {
+    color: #e74c3c;
+}
+
+.dsl-guidelines-box {
+    background: rgba(22, 17, 12, 0.92);
+    border-left: 4px solid #b78f2f;
+    padding: 1rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.dsl-guidelines-title {
+    font-size: 0.74rem;
+    letter-spacing: 0.18em;
+    color: #dfd8a3;
+}
+
+.dsl-guide-item {
+    font-family: 'Courier New', monospace;
+    font-size: 0.74rem;
+    color: #cfc6b0;
+    line-height: 1.5;
+}

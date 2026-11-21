@@ -484,6 +484,70 @@ function SuggestedQuestions({ suspectId, state, onAsk }) {
 }
 
 /* ══════════════════════════════════════════════════════
+   ROTATING IN-CHARACTER OFF-TOPIC RESPONSES
+══════════════════════════════════════════════════════ */
+const CURATOR_OFF_TOPIC = {
+    marcus_chen: [
+        "Detective, Helena was poisoned in this museum last night and you're asking me about that? Are you serious?",
+        "My hands haven't stopped trembling all morning. Please, ask me something relevant or let me get back to the catalog.",
+        "I'm trying to cooperate with the police, but that question has absolutely nothing to do with Helena's murder.",
+        "Is this some kind of stress test? I'm an assistant curator, not a suspect in a joke. Ask a real question.",
+        "Look at the crime scene tape outside this room. A brilliant woman is dead. Please focus on the case."
+    ],
+    father_moretti: [
+        "Detective, a beloved member of our community lies dead, and you occupy our time with earthly trifles?",
+        "In moments of great tragedy, our focus should be on truth, justice, and the repose of the soul—not idle diversions.",
+        "I came here in Christian charity to assist your investigation. Please do not squander it on irrelevant conversation.",
+        "My prayers today are with Helena and the bereaved. If you have inquiries of spiritual or evidentiary weight, speak them.",
+        "God tests our patience in many ways, Detective. Let us return our minds to the grave matter before us."
+    ],
+    isabelle_rousseau: [
+        "Mon dieu, Detective, is this how Scotland Yard conducts a homicide inquiry? That question is utterly irrelevant.",
+        "I have international clients waiting and an art fair in Paris next week. Spare me these provincial trivialities.",
+        "Vraiment, you drag an international dealer into an interrogation chamber to ask me that? Please, focus.",
+        "I agreed to answer questions regarding Helena's demise, not indulge in bizarre parlor games. Next question.",
+        "If your investigative repertoire has been reduced to schoolyard questions, perhaps I should summon my lawyer."
+    ],
+    dr_raymond_kask: [
+        "Detective, that inquiry possesses an intellectual relevance quotient of precisely zero. Let us not squander my expertise.",
+        "In scholarly peer review, irrelevant postulates are rejected with prejudice. I suggest you apply similar rigor to this murder.",
+        "I hold two doctorates from Oxford and Columbia. I did not step into this precinct to entertain kindergarten queries.",
+        "We are dealing with the theft of a priceless 14th-century codex and a homicide. Focus your cognition, Detective.",
+        "A staggering waste of academic and forensic time. Table a substantive question regarding the evidence or excuse me."
+    ],
+    sophie_lin: [
+        "Detective, someone hacked or stole my admin credentials to commit a murder, and you're asking me that?!",
+        "I'm literally terrified of going to prison for something I didn't do, and you're asking random nonsense?",
+        "I have my phone logs, my terminal access sheets, and my timestamps right here. Ask me about the system, please!",
+        "My career in cybersecurity is on the line right now. Don't play games with me, Detective.",
+        "Look at the access override timeline! That's the real breadcrumb trail! Stop asking about unrelated stuff!"
+    ],
+    victor_voss: [
+        "My mother is lying in a morgue drawer, Detective. Do you seriously think I care about that right now?",
+        "Ask me about my debts, ask me about The Anchor, but stop wasting my time on pointless bullshit.",
+        "I didn't kill her! Figure out who did and leave me alone with these stupid questions.",
+        "Every second you waste on nonsense is another second her killer gets further away.",
+        "I'm barely keeping it together. Ask something that matters or arrest me."
+    ],
+    thomas_wade: [
+        "Detective, I came here in the cold to give evidence about a killer, and you're asking me about trivial nonsense?",
+        "I may sleep on the street, but my mind is intact. Ask me about what I saw in that alley, or let me return to my shelter.",
+        "If you want to mock an old man, do it on your own time. A woman is in the morgue.",
+        "I'm giving you the man's shoes, his coat, and his direction. Don't waste my breath with irrelevant questions.",
+        "I know what I saw on Cavanaugh Street. Focus your questions on that night."
+    ],
+    diane_park: [
+        "Detective, I discovered a dead woman at her desk four hours ago, and you're asking me about that?",
+        "My crew is waiting downstairs in tears, and you're asking irrelevant questions. Please be professional.",
+        "I gave you the exact timestamps: 3:30 AM, 3:47 AM, 3:49 AM. Focus on the timeline.",
+        "I am trying to help Scotland Yard solve a murder. Don't waste my time with trivia.",
+        "If you want to know what I saw in that room, ask me. Otherwise, let me check on my cleaning staff."
+    ]
+};
+
+const curatorOffTopicCounts = {};
+
+/* ══════════════════════════════════════════════════════
    MAIN INTERROGATION ROOM — AI AGENT INTEGRATION
 ══════════════════════════════════════════════════════ */
 export default function InterrogationRoom({ suspectId = 'marcus_chen', onBack, onQuestionAsked, onFactDiscovered, onEvidenceDiscovered, discoveredFacts = [], discoveredEvidence = [], userNotes = '', onUpdateNotes }) {
@@ -680,8 +744,39 @@ export default function InterrogationRoom({ suspectId = 'marcus_chen', onBack, o
                     fullMessage = `[The detective presents evidence: ${presentedEvidence.name} — ${presentedEvidence.description}]\n\n${questionText}`;
                 }
 
-                const result = await sendToAgent(suspectId, fullMessage, sessionId);
-                const responseText = result.response; // Assuming result.response from original code
+                let result;
+                // If presenting evidence, try the dedicated forensic endpoint first
+                if (presentedEvidence) {
+                    try {
+                        const evRes = await fetch('/api/evidence/present', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                appName: suspectId,
+                                suspect_id: suspectId,
+                                sessionId: sessionId,
+                                session_id: sessionId,
+                                evidenceId: presentedEvidence.id,
+                                evidence_id: presentedEvidence.id,
+                                evidenceLabel: presentedEvidence.name,
+                                evidence_label: presentedEvidence.name,
+                            }),
+                        });
+                        if (evRes.ok) {
+                            result = await evRes.json();
+                        }
+                    } catch (evErr) {
+                        console.warn('[Interrogation] Evidence API note:', evErr);
+                    }
+                }
+
+                if (!result) {
+                    result = await sendToAgent(suspectId, fullMessage, sessionId);
+                }
+
+                const responseText = result.response || result.message || '';
+                if (result.stress !== undefined) setStress(result.stress);
+                if (result.state) setState(result.state);
 
                 addMessage(suspect.id, responseText);
                 analyzeResponse(responseText, questionText);
@@ -717,8 +812,8 @@ export default function InterrogationRoom({ suspectId = 'marcus_chen', onBack, o
             } catch (err) {
                 console.error('Agent error:', err);
                 // Fall back to scripted response
-                const d = suspect.dialogues;
-                const response = d.under_pressure || d.greeting;
+                const d = suspect.dialogues || {};
+                const response = d.under_pressure || d.greeting || "I have no further comment, Detective.";
                 addMessage(suspect.id, response);
 
                 // Check scripted for facts too
@@ -728,9 +823,12 @@ export default function InterrogationRoom({ suspectId = 'marcus_chen', onBack, o
                 setIsThinking(false);
             }
         } else {
-            // ── SCRIPTED FALLBACK ──
+            // ── SCRIPTED FALLBACK (INTELLIGENT IN-CHARACTER STATE MACHINE) ──
             setTimeout(() => {
-                const d = suspect.dialogues;
+                const d = suspect.dialogues || {};
+                const qLower = questionText.toLowerCase();
+                let response = d.greeting || "I have nothing further to say, Detective.";
+
                 if (presentedEvidence) {
                     const reaction = presentedEvidence.suspectReactions?.[suspect.id];
                     if (reaction) {
@@ -739,19 +837,132 @@ export default function InterrogationRoom({ suspectId = 'marcus_chen', onBack, o
                         if (reaction.reaction?.includes('defensive')) setState('defensive');
                         if (reaction.reaction?.includes('aggressive')) setState('aggressive');
                         if (reaction.reaction?.includes('breaks')) setState('breaking');
+                    } else if (suspect.id === 'father_moretti') {
+                        if (presentedEvidence.id === 'aconite_garden' || presentedEvidence.id === 'back_alley_reconstruction') {
+                            response = "Those plants have been in our garden for thirty years... I tended them myself. I only wanted the sacred manuscript returned. It BELONGS to God's Church! She laughed at me, Detective. God forgive me! God forgive me!";
+                            setState('breaking');
+                            setStress(100);
+                        } else if (presentedEvidence.id === 'window_latch' || presentedEvidence.id === 'black_thread') {
+                            response = "A broken latch and a black thread? There are hundreds of black garments in Manhattan, Detective. A priest does not crawl through windows!";
+                            setState('aggressive');
+                            setStress(prev => Math.min(100, prev + 25));
+                        } else if (presentedEvidence.id === 'shoe_prints' || presentedEvidence.id === 'homeless_witness') {
+                            response = "A vagrant in the dark claims to recognize Italian leather shoes? That is absurd conjecture!";
+                            setState('defensive');
+                            setStress(prev => Math.min(100, prev + 20));
+                        } else if (presentedEvidence.id === 'gallery_visitor_log') {
+                            response = "I signed the visitor log at 11:28 PM because I had nothing to hide. I dropped off parish circulars and departed.";
+                            setState('defensive');
+                        } else {
+                            response = `You place ${presentedEvidence.name} before me... An object of worldly curiosity cannot manufacture guilt, Detective.`;
+                        }
+                    } else if (suspect.id === 'marcus_chen') {
+                        if (presentedEvidence.id === 'teacup') {
+                            response = "My prints are on the teacup because I MADE HER TEA AT FOUR IN THE AFTERNOON! She asked for Earl Grey during our daily accession review!";
+                            setState('defensive');
+                            setStress(prev => Math.min(100, prev + 20));
+                        } else {
+                            response = `I see ${presentedEvidence.name}. I handle curatorial accessions, Detective, not crime evidence.`;
+                        }
+                    } else if (suspect.id === 'isabelle_rousseau') {
+                        if (presentedEvidence.id === 'phone_records') {
+                            response = "Fine! Helena called me at 10:45 PM. She threatened a scandal over some provenance documentation. But I went straight home to Park Avenue. The concierge saw me at 10:55 PM!";
+                            setState('cooperative');
+                        } else {
+                            response = `Mon cher, showing me ${presentedEvidence.name} is irrelevant. My alibi at Le Bernardin is completely verified.`;
+                        }
+                    } else if (suspect.id === 'dr_raymond_kask') {
+                        if (presentedEvidence.id === 'manuscript_page' || presentedEvidence.id === 'security_logs') {
+                            response = "Very well! I left Columbia at eleven! I had a meeting with a private collector who wanted the folio! But when I reached 72nd Street, the gallery was dark and locked! Someone was already inside!";
+                            setState('cooperative');
+                        } else {
+                            response = `As an academic, I evaluate codicology, not mundane material debris like ${presentedEvidence.name}.`;
+                        }
+                    } else if (suspect.id === 'sophie_lin') {
+                        if (presentedEvidence.id === 'security_logs') {
+                            response = "Father Moretti sat at my desk two days before the murder! He asked to use my tablet to check insurance for the Church. He must have copied my override PIN from my desk organizer!";
+                            setState('cooperative');
+                        } else {
+                            response = `I've analyzed the telemetry for ${presentedEvidence.name}. My mobile GPS logs prove I was in Queens.`;
+                        }
+                    } else if (suspect.id === 'victor_voss') {
+                        if (presentedEvidence.id === 'phone_records') {
+                            response = "Yes, I called her two days before asking for money. But she mentioned Father Moretti on that call—she said he'd been coming around constantly and acting possessive about the manuscript!";
+                            setState('cooperative');
+                        } else {
+                            response = `That's from her desk, isn't it? Please, put ${presentedEvidence.name} back. It hurts to look at it.`;
+                        }
+                    } else if (suspect.id === 'thomas_wade') {
+                        if (presentedEvidence.id === 'shoe_prints' || presentedEvidence.id === 'homeless_witness' || presentedEvidence.id === 'back_alley_reconstruction') {
+                            response = "Those are the Santoni shoe marks! That's the man in the black robe I saw leaving through the rear door at one in the morning, heading toward St. Sebastian's Church!";
+                            setState('cooperative');
+                        } else {
+                            response = `I was in the alley. I saw the man leave. I don't know anything about ${presentedEvidence.name}.`;
+                        }
+                    } else if (suspect.id === 'diane_park') {
+                        if (presentedEvidence.id === 'window_latch' || presentedEvidence.id === 'teacup' || presentedEvidence.id === 'origami_crane') {
+                            response = "That window latch was sheared from the inside! And that white origami crane was sitting right by her cold teacup when I found her at 3:47 AM!";
+                            setState('cooperative');
+                        } else {
+                            response = `I preserved the room exactly as I found it when I called 911 at 3:49 AM.`;
+                        }
                     } else {
                         response = "I... I don't see what that has to do with me. This is just a piece of " + (presentedEvidence.category?.toLowerCase() || 'evidence') + ".";
                     }
-                } else if (questionText.toLowerCase().includes('alibi') ||
-                    questionText.toLowerCase().includes('where were you') ||
-                    questionText.toLowerCase().includes('that night')) {
+                } else if (qLower.includes('alibi') || qLower.includes('where were you') || qLower.includes('that night') || qLower.includes('march 14') || qLower.includes('timeline')) {
                     response = d.about_alibi || d.greeting;
-                } else if (questionText.toLowerCase().includes('helena') ||
-                    questionText.toLowerCase().includes('victim')) {
+                } else if (qLower.includes('helena') || qLower.includes('victim') || qLower.includes('relationship') || qLower.includes('mother') || qLower.includes('boss')) {
                     response = d.about_helena || d.greeting;
-                } else if (questionText.toLowerCase().includes('cooperate') ||
-                    questionText.toLowerCase().includes('help')) {
+                } else if (qLower.includes('cooperate') || qLower.includes('help') || qLower.includes('truth')) {
                     response = d.cooperative || d.greeting;
+                } else if (qLower.includes('motive') || qLower.includes('money') || qLower.includes('promotion') || qLower.includes('debt') || qLower.includes('relic')) {
+                    response = d.under_pressure || "I have no financial or personal motive to harm Helena.";
+                } else if (qLower.includes('kill') || qLower.includes('murder') || qLower.includes('poison') || qLower.includes('aconite') || qLower.includes('wolfsbane')) {
+                    response = d.breaks || d.under_pressure || "I did not murder Helena!";
+                } else if (qLower.includes('tea') || qLower.includes('teacup') || qLower.includes('earl grey') || qLower.includes('cup')) {
+                    if (suspect.id === 'marcus_chen') {
+                        response = "My prints are on the cup because I MADE HER TEA AT FOUR IN THE AFTERNOON! She asked for Earl Grey during our daily accession review!";
+                    } else if (suspect.id === 'father_moretti') {
+                        response = "I did not share tea with her that night. Helena offered me a cup when I visited earlier, but I declined.";
+                    } else {
+                        response = "Helena drank tea late at night. Marcus usually prepared it for her.";
+                    }
+                } else if (qLower.includes('manuscript') || qLower.includes('folio') || qLower.includes('page') || qLower.includes('stolen')) {
+                    if (suspect.id === 'father_moretti') {
+                        response = "The illuminated codex belonged to St. Sebastian's before the looting of 1847. It was consecrated property. But I would never resort to murder for parchment.";
+                    } else if (suspect.id === 'dr_raymond_kask') {
+                        response = "The 15th-century illuminated page depicts the lost Reliquary of St. Sebastian. Its historical and financial value cannot be overstated.";
+                    } else {
+                        response = "The missing 15th-century manuscript page was the crown jewel of the gallery's collection.";
+                    }
+                } else if (qLower.includes('moretti') || qLower.includes('priest') || qLower.includes('church') || qLower.includes('sebastian')) {
+                    if (suspect.id === 'sophie_lin') {
+                        response = "Father Moretti sat right at my desk for ten minutes two days before the murder! He asked to use my tablet to check church art insurance. I trusted him... he was a priest.";
+                    } else if (suspect.id === 'victor_voss') {
+                        response = "My mother told me on our call that Father Moretti had been coming around the gallery constantly, acting strangely possessive about that manuscript.";
+                    } else if (suspect.id === 'thomas_wade') {
+                        response = "The man who hurried out the back door was wearing a priest's cassock and walked north straight toward St. Sebastian's Church.";
+                    } else {
+                        response = "Father Moretti was a frequent visitor to the gallery. Helena debated church art history with him often.";
+                    }
+                } else if (qLower.includes('blackwood') || qLower.includes('nda') || qLower.includes('interview')) {
+                    if (suspect.id === 'marcus_chen') {
+                        response = "Okay... fine! I was at Blackwood Gallery meeting with the owner about a director role! I signed an NDA! I lied because it looked disloyal, not because I'm a killer!";
+                        setState('cooperative');
+                    } else {
+                        response = "Blackwood Gallery is our primary commercial competitor on 73rd Street.";
+                    }
+                } else if (qLower.includes('security') || qLower.includes('camera') || qLower.includes('override') || qLower.includes('cctv') || qLower.includes('login') || qLower.includes('pin')) {
+                    if (suspect.id === 'sophie_lin') {
+                        response = "The override occurred at midnight sharp using my supervisor PIN. But my phone GPS logs prove I was home in Queens the entire evening!";
+                    } else {
+                        response = "The security cameras on the 3rd floor were suppressed at midnight sharp.";
+                    }
+                } else {
+                    const offTopicList = CURATOR_OFF_TOPIC[suspect.id] || [d.under_pressure || d.generic || d.greeting];
+                    const count = curatorOffTopicCounts[suspect.id] || 0;
+                    response = offTopicList[count % offTopicList.length];
+                    curatorOffTopicCounts[suspect.id] = count + 1;
                 }
 
                 addMessage(suspect.id, response);
@@ -781,6 +992,10 @@ export default function InterrogationRoom({ suspectId = 'marcus_chen', onBack, o
         const lower = responseText.toLowerCase();
         let stressDelta = 5;
         let patienceDelta = -3; // default small patience loss per question
+
+        if (questionText && (questionText.toLowerCase().includes('murder') || questionText.toLowerCase().includes('poison') || questionText.toLowerCase().includes('kill'))) {
+            stressDelta += 8;
+        }
 
         // Detect emotional intensity from the AI's response
         if (lower.includes('lawyer') || lower.includes('attorney') || lower.includes('counsel')) {

@@ -1,0 +1,388 @@
+.tw-container {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 30%, #15110d 0%, #070504 100%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+    color: #e2dac9;
+    position: relative;
+}
+
+.tw-header {
+    height: 64px;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(183, 143, 47, 0.2);
+    background: linear-gradient(to bottom, #110d0a, #0b0806);
+}
+
+.tw-title-group h1 {
+    font-size: 1.15rem;
+    letter-spacing: 0.22em;
+    color: #d4bc8b;
+    margin: 0;
+}
+
+.tw-title-group p {
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    color: #7b6f54;
+    letter-spacing: 0.08em;
+    margin: 0.2rem 0 0 0;
+}
+
+.tw-header-actions {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+.tw-btn-compare {
+    background: rgba(183, 143, 47, 0.15);
+    border: 1px solid #b78f2f;
+    color: #dfd8a3;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+}
+
+.tw-btn-compare.active {
+    background: #b78f2f;
+    color: #000;
+    font-weight: 700;
+}
+
+.tw-btn-accuse {
+    background: linear-gradient(to bottom, #8a2be2, #4b0082);
+    border: 1px solid #ba55d3;
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    padding: 0.5rem 1.4rem;
+    cursor: pointer;
+    border-radius: 2px;
+    font-weight: 600;
+    transition: all 0.25s;
+}
+
+.tw-btn-accuse:hover {
+    box-shadow: 0 0 15px rgba(186, 85, 211, 0.4);
+}
+
+/* Main workbench layout */
+.tw-main-layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr 340px;
+    overflow: hidden;
+}
+
+/* Left sidebar: theory list */
+.tw-sidebar {
+    background: rgba(10, 8, 6, 0.95);
+    border-right: 1px solid rgba(183, 143, 47, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.tw-section-label {
+    padding: 1rem 1.2rem 0.6rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: #8c7e62;
+    border-bottom: 1px solid rgba(183, 143, 47, 0.1);
+}
+
+.tw-theory-tab {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid rgba(183, 143, 47, 0.08);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.tw-theory-tab:hover {
+    background: rgba(183, 143, 47, 0.06);
+}
+
+.tw-theory-tab.active {
+    background: rgba(183, 143, 47, 0.12);
+    border-left: 3px solid #b78f2f;
+}
+
+.tw-tab-title {
+    font-size: 0.78rem;
+    color: #d4bc8b;
+    letter-spacing: 0.08em;
+}
+
+.tw-tab-suspect {
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    color: #7a6f56;
+}
+
+.tw-tab-plausibility {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Special Elite', monospace;
+    font-size: 0.62rem;
+    margin-top: 0.2rem;
+}
+
+/* Center stage: active theory analysis */
+.tw-content-stage {
+    padding: 1.8rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.tw-theory-banner {
+    background: rgba(18, 14, 10, 0.9);
+    border: 1px solid rgba(183, 143, 47, 0.25);
+    padding: 1.4rem;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tw-banner-info h2 {
+    font-size: 1.1rem;
+    color: #dfd8a3;
+    margin: 0 0 0.3rem 0;
+    letter-spacing: 0.12em;
+}
+
+.tw-banner-info p {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #b0a48b;
+    margin: 0;
+    max-width: 520px;
+    line-height: 1.5;
+}
+
+.tw-score-dial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 8, 5, 0.9);
+    border: 2px solid #b78f2f;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    box-shadow: 0 0 15px rgba(183, 143, 47, 0.2);
+}
+
+.tw-dial-num {
+    font-family: 'Special Elite', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #e2dac9;
+}
+
+.tw-dial-lbl {
+    font-size: 0.52rem;
+    letter-spacing: 0.12em;
+    color: #8c7e62;
+}
+
+/* Assumptions & Contradictions Grid */
+.tw-analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+}
+
+.tw-analysis-card {
+    background: rgba(15, 12, 9, 0.85);
+    border: 1px solid rgba(183, 143, 47, 0.18);
+    padding: 1.2rem;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.tw-analysis-card.assumptions {
+    border-top: 3px solid #e67e22;
+}
+
+.tw-analysis-card.supported {
+    border-top: 3px solid #2ecc71;
+}
+
+.tw-card-header {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tw-card-header.warning { color: #e67e22; }
+.tw-card-header.success { color: #2ecc71; }
+
+.tw-bullet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.tw-bullet-list li {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: #cfc6b0;
+    position: relative;
+    padding-left: 1rem;
+}
+
+.tw-bullet-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #b78f2f;
+}
+
+/* Right sidebar: Evidence attachment deck */
+.tw-evidence-dock {
+    background: rgba(10, 8, 6, 0.95);
+    border-left: 1px solid rgba(183, 143, 47, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 1.2rem;
+    gap: 1rem;
+}
+
+.tw-dock-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: #d4bc8b;
+    margin-bottom: 0.4rem;
+}
+
+.tw-dock-help {
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    color: #7b6f52;
+    line-height: 1.4;
+}
+
+.tw-ev-item {
+    background: rgba(20, 16, 12, 0.8);
+    border: 1px solid rgba(183, 143, 47, 0.2);
+    padding: 0.8rem;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    transition: all 0.2s;
+}
+
+.tw-ev-item:hover {
+    border-color: #b78f2f;
+}
+
+.tw-ev-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.tw-ev-icon { font-size: 1.2rem; }
+
+.tw-ev-name {
+    font-size: 0.72rem;
+    color: #d4bc8b;
+    letter-spacing: 0.08em;
+}
+
+.tw-ev-toggles {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+}
+
+.tw-toggle-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #3c3222;
+    color: #7a6f52;
+    font-size: 0.55rem;
+    padding: 0.3rem;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    border-radius: 2px;
+}
+
+.tw-toggle-btn.support.active {
+    background: rgba(46, 204, 113, 0.2);
+    border-color: #2ecc71;
+    color: #2ecc71;
+}
+
+.tw-toggle-btn.contradict.active {
+    background: rgba(231, 76, 60, 0.2);
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+/* Side-by-side comparison modal overlay */
+.tw-compare-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 2, 4, 0.92);
+    backdrop-filter: blur(10px);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    overflow: hidden;
+}
+
+.tw-compare-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.tw-compare-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    overflow-y: auto;
+}
+
+.tw-compare-col {
+    background: rgba(14, 11, 8, 0.95);
+    border: 1px solid rgba(183, 143, 47, 0.3);
+    padding: 1.6rem;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}

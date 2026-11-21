@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import './DiaryViewer.css';
 
 /*
@@ -98,15 +98,13 @@ const DiaryViewer = ({
         timers.current = [];
 
         if (!isOpen) {
-            setPhase(PHASE.CLOSED);
-            setFlipIdx(0);
-            setIsAnimating(false);
-            return;
+            const t = setTimeout(() => {
+                setPhase(PHASE.CLOSED);
+                setFlipIdx(0);
+                setIsAnimating(false);
+            }, 0);
+            return () => clearTimeout(t);
         }
-
-        setPhase(PHASE.CLOSED);
-        setFlipIdx(0);
-        setIsAnimating(false);
 
         // Closed cover sits for 1.2s, then opens to page 1
         add(() => setPhase(PHASE.OPENING), 200);

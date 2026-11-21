@@ -258,16 +258,16 @@ export default function Dashboard({ discoveredFacts = [], discoveredEvidence = [
         return () => window.removeEventListener('click', handleClick);
     }, []);
 
-    // Dust particles
+    // Dust particles (deterministic to preserve React purity)
     const particles = useMemo(() =>
         Array.from({ length: 40 }, (_, i) => ({
             id: i,
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            size: 1 + Math.random() * 2,
-            dur: 15 + Math.random() * 25,
-            delay: Math.random() * 5,
-            opacity: 0.1 + Math.random() * 0.2,
+            x: ((i * 37 + 13) % 100),
+            y: ((i * 53 + 29) % 100),
+            size: 1 + ((i * 7) % 3),
+            dur: 15 + ((i * 11) % 25),
+            delay: (i * 0.25) % 5,
+            opacity: 0.1 + ((i * 5) % 20) / 100,
         })), []);
 
     return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './EndingCinematic.css';
 
 /* ─────────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ const TypeWriter = ({ text, speed = 60, delay = 0 }) => {
 /* ─────────────────────────────────────────────────────────────
    COMPONENT
 ───────────────────────────────────────────────────────────── */
-const EndingCinematic = ({ accusedSuspect = 'kye', onRestart }) => {
+const EndingCinematic = ({ accusedSuspect = 'kye', onRestart, onViewReport }) => {
     const [phaseIndex, setPhaseIndex] = useState(0);
     const [visible, setVisible] = useState(false);
     const [petalCount, setPetalCount] = useState(0);
@@ -163,7 +163,7 @@ const EndingCinematic = ({ accusedSuspect = 'kye', onRestart }) => {
                             ))}
                         </div>
                         <div className="ec-caption-bottom">
-                            <div className="ec-caption-overline">THE DETECTIVE'S ROOM — NIGHT</div>
+                            <div className="ec-caption-overline">THE DETECTIVE'S ROOM — NIGHT {accusedSuspect ? `[INDICTED: ${accusedSuspect.toUpperCase()}]` : ''}</div>
                             <p className="ec-caption-text">
                                 <TypeWriter text="Five threads. Five people. One chain. All of them pulled it tight." delay={1500} speed={55} />
                             </p>
@@ -253,11 +253,22 @@ const EndingCinematic = ({ accusedSuspect = 'kye', onRestart }) => {
                         <div className="ec-case-stamp">CASE CLOSED</div>
                         <div className="ec-case-sub">D'Souza Estate Murder — File No. DAI-007</div>
                     </div>
-                    {onRestart && (
-                        <button className="ec-restart-btn" onClick={onRestart}>
-                            ↺ PLAY AGAIN
-                        </button>
-                    )}
+                    <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', zIndex: 10 }}>
+                        {onViewReport && (
+                            <button
+                                className="ec-restart-btn"
+                                style={{ background: 'linear-gradient(to bottom, #725624, #3d2d11)', borderColor: '#b78f2f', color: '#dfd8a3' }}
+                                onClick={onViewReport}
+                            >
+                                📊 VIEW FORENSIC DOSSIER
+                            </button>
+                        )}
+                        {onRestart && (
+                            <button className="ec-restart-btn" onClick={onRestart}>
+                                ↺ PLAY AGAIN
+                            </button>
+                        )}
+                    </div>
                 </div>
             )}
 

@@ -1,0 +1,171 @@
+/* Detective Tutorial Modal CSS */
+.dtm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3, 2, 4, 0.88);
+    backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.dtm-modal {
+    width: 720px;
+    max-width: 92vw;
+    background: #0d0a08;
+    border: 1px solid rgba(183, 143, 47, 0.45);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.95), 0 0 25px rgba(183, 143, 47, 0.2);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+    color: #e2dac9;
+}
+
+.dtm-header {
+    padding: 1.2rem 1.8rem;
+    border-bottom: 1px solid rgba(183, 143, 47, 0.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to right, rgba(183, 143, 47, 0.12), transparent);
+}
+
+.dtm-title {
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    color: #dfd8a3;
+    margin: 0;
+}
+
+.dtm-subtitle {
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    color: #8c7e62;
+    letter-spacing: 0.12em;
+    margin-top: 0.2rem;
+}
+
+.dtm-steps-nav {
+    display: flex;
+    border-bottom: 1px solid rgba(183, 143, 47, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.dtm-step-tab {
+    flex: 1;
+    padding: 0.7rem 0.5rem;
+    text-align: center;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: #7b6f52;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.dtm-step-tab.active {
+    color: #dfd8a3;
+    border-bottom-color: #b78f2f;
+    background: rgba(183, 143, 47, 0.08);
+}
+
+.dtm-body {
+    padding: 1.8rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    min-height: 240px;
+}
+
+.dtm-content-card {
+    background: rgba(18, 14, 10, 0.85);
+    border: 1px solid rgba(183, 143, 47, 0.2);
+    padding: 1.4rem;
+    border-radius: 3px;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.dtm-icon-large {
+    font-size: 3rem;
+    color: #b78f2f;
+    min-width: 60px;
+    text-align: center;
+}
+
+.dtm-text-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dtm-headline {
+    font-size: 0.95rem;
+    letter-spacing: 0.12em;
+    color: #dfd8a3;
+    margin: 0;
+}
+
+.dtm-prose {
+    font-family: 'Georgia', serif;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    color: #cfc6b0;
+    margin: 0;
+}
+
+.dtm-tip-box {
+    background: rgba(183, 143, 47, 0.08);
+    border-left: 3px solid #b78f2f;
+    padding: 0.8rem 1rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    color: #d4bc8b;
+    line-height: 1.4;
+}
+
+.dtm-footer {
+    padding: 1rem 1.8rem;
+    border-top: 1px solid rgba(183, 143, 47, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(10, 8, 6, 0.95);
+}
+
+.dtm-nav-btn {
+    background: transparent;
+    border: 1px solid rgba(183, 143, 47, 0.4);
+    color: #d4bc8b;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+}
+
+.dtm-nav-btn:hover:not(:disabled) {
+    background: rgba(183, 143, 47, 0.2);
+    border-color: #dfd8a3;
+    color: #fff;
+}
+
+.dtm-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.dtm-nav-btn.primary {
+    background: linear-gradient(to bottom, #725624, #3d2d11);
+    border-color: #b78f2f;
+    color: #dfd8a3;
+}

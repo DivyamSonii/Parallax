@@ -30,6 +30,26 @@ FALLBACK = {
         "smoke": "Mr. D'Souza closes the vents when he smokes his pipe to keep the Perique scent inside. He's done it since Miriam died. It never occurred to anyone it could suffocate someone.",
         "ruler": "Her yellow plastic ruler. She used it to measure the angle and spacing of the daisy pots."
     },
+        "intents": {
+        "alibi": "I finished the evening chores in the scullery at half past eight, locked the pantry, and retired to the servants' quarters in the carriage house. I was asleep by ten and woke at five to prepare the bird feed. The cook saw me in the yard at dawn.",
+        "relationship": "I watched Miss Eliza grow up from a little girl running through the rose gardens. She was quiet, thoughtful, and carried the weight of her mother's passing. She treated me with gentle respect. Finding her like that broke my heart into pieces.",
+        "motive": "Motive? Lord forgive you for even thinking it! I loved that dear child like she was my own daughter. I have worked in this house for forty years with an unblemished name. I would die before letting any harm touch Eliza.",
+        "accusation": "How dare you speak to me in that manner, Detective! I am the one who found her, who guarded the door so nothing was disturbed, and who called the authorities! To cast suspicion on an old woman in mourning is disgraceful!",
+        "crime_scene": "The sanctuary glass was covered in dense white steam. When I punched the code and pushed the door open, the air rushed out—heavy, damp, smelling of old pipe tobacco and crushed flowers. Eliza lay curled on the stone, surrounded by her daisies...",
+        "procedural": "I will answer any honest question about this house, the family, or what I found on that dreadful morning. But I expect to be spoken to with Christian decency.",
+    },
+    "role_confusion": {
+        "audio": "Electronic speakers and sound waves? You would have to ask young Mr. Harlan or that engineer gentleman. I only look after the birds and the linens.",
+        "botany": "I water the flowers, but Professor Waltz is the one who studies them and brews teas.",
+        "medical": "I am a housekeeper, sir, not a physician. You must consult Dr. Menon for matters concerning the autopsy.",
+    },
+    "off_topic": [
+        "Detective, with all due respect, I am an elderly housekeeper who discovered a murdered girl yesterday. That question has nothing to do with what happened.",
+        "The glass was fogged, the parrot was mimicking her final counting, and you ask me such things? Lord grant us the sense to seek the truth.",
+        "I have no time for parlor riddles, Detective. If you want to know about the keys, the routines, or the family, ask plainly. Otherwise, let me grieve.",
+        "I speak only what I observed with my own eyes. What you just asked me has no place in this tragic house.",
+        "Poor Miss Eliza deserves justice and peace, not foolish chatter. Ask a proper question about that dreadful morning, sir.",
+    ],
     "dialogues": {
         "under_pressure": "I tell the truth, Detective. Miss Eliza was terrified of that hum in the glass.",
         "breaks": "Poor girl... she was counting petals trying to stay sane while that awful noise vibrated the glass to pieces."

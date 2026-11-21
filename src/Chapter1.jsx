@@ -7,6 +7,7 @@ import InterrogationRoom from './InterrogationRoom';
 import DetectiveRoom from './DetectiveRoom';
 import DeductionBoard from './DeductionBoard';
 import ParrotInspection from './ParrotInspection';
+import SanctuaryCrimeMap from './components/SanctuaryCrimeMap';
 
 /* ── WordWriter (exact copy from Prologue) ── */
 const WordWriter = ({ text, delay = 0, speed = 400 }) => {
@@ -28,7 +29,7 @@ const WordWriter = ({ text, delay = 0, speed = 400 }) => {
 
 const Chapter1 = ({ onComplete, onSolve }) => {
     const [scene, setScene] = useState('maid-walking');
-    const [photoOnBoard, setPhotoOnBoard] = useState(false);
+    const [_photoOnBoard, setPhotoOnBoard] = useState(false);
     const [evidenceItems, setEvidenceItems] = useState([]);
     const [activePopup, setActivePopup] = useState(null);
     const [ventStage, setVentStage] = useState(0);
@@ -626,19 +627,10 @@ const Chapter1 = ({ onComplete, onSolve }) => {
                                 />
                             )}
 
-                            {/* MAP VIEW */}
+                            {/* MAP VIEW — 3D ISOMETRIC FIBONACCI CRIME MAP */}
                             {dashboardTab === 'map' && (
-                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', boxSizing: 'border-box' }}>
-                                    <div style={{ position: 'relative', width: '100%', height: '100%', border: '1px solid rgba(212, 175, 55, 0.3)', background: 'rgba(0,0,0,0.6)', overflow: 'hidden' }}>
-                                        <div className="dash-note-sec-title" style={{ position: 'absolute', top: '20px', left: '25px', zIndex: 10, background: 'rgba(0,0,0,0.8)', padding: '8px 16px', border: '1px solid #d4af37' }}>
-                                            ESTATE MAP — BIRD SANCTUARY SECTOR
-                                        </div>
-                                        <img
-                                            src="/scenes/map1.jpeg"
-                                            alt="Estate Map"
-                                            style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'sepia(0.3) contrast(1.1) brightness(0.9)' }}
-                                        />
-                                    </div>
+                                <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                                    <SanctuaryCrimeMap onBack={() => setDashboardTab('crime-scene')} />
                                 </div>
                             )}
 

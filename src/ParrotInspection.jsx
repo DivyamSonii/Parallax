@@ -1,21 +1,120 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useCallback } from 'react';
+import { motion } from 'framer-motion';
+
+// Audio definitions for Shuk's extracted memory fragments
+const FRAGMENT_DEFINITIONS = {
+    A: {
+        id: 'A',
+        name: 'Eliza Counting Petals ("13... 21... 34...")',
+        soundDesc: 'Whispered voice & botanical petal measurement',
+        toneInfo: 'Fibonacci harmonic resonance (261Hz, 329Hz, 392Hz, 523Hz)'
+    },
+    B: {
+        id: 'B',
+        name: 'Low Humming Vibration',
+        soundDesc: 'Deep 19Hz infrasonic sub-bass acoustic drone',
+        toneInfo: 'Infrasound subwoofer oscillation (38Hz -> 19Hz)'
+    },
+    C: {
+        id: 'C',
+        name: 'Parrot Panic Sounds',
+        soundDesc: 'Frantic fluttering & avian distress shrieks',
+        toneInfo: 'High-frequency screech & wing flapping (700Hz - 1400Hz)'
+    },
+    D: {
+        id: 'D',
+        name: 'Door Keypad Lock Beep',
+        soundDesc: 'Heavy electronic solenoid latch engage',
+        toneInfo: 'Dual-tone electronic keypad solenoid confirmation'
+    }
+};
+
+// Web Audio API procedural audio clips
+const playAudioFragment = (id) => {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        if (ctx.state === 'suspended') {
+            ctx.resume();
+        }
+
+        const now = ctx.currentTime;
+
+        if (id === 'A') {
+            // Eliza counting petals: 4 resonant melodic chimes
+            [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now + idx * 0.22);
+                gain.gain.setValueAtTime(0, now + idx * 0.22);
+                gain.gain.linearRampToValueAtTime(0.25, now + idx * 0.22 + 0.04);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.22 + 0.35);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now + idx * 0.22);
+                osc.stop(now + idx * 0.22 + 0.4);
+            });
+        } else if (id === 'B') {
+            // Low humming vibration (19Hz Infrasound)
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(38, now);
+            osc.frequency.linearRampToValueAtTime(19, now + 1.2);
+            gain.gain.setValueAtTime(0.01, now);
+            gain.gain.linearRampToValueAtTime(0.4, now + 0.3);
+            gain.gain.linearRampToValueAtTime(0.01, now + 1.4);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 1.5);
+        } else if (id === 'C') {
+            // Parrot panic fluttering & screeching
+            [750, 1200, 900, 1450, 1100].forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+                gain.gain.setValueAtTime(0.14, now + idx * 0.12);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.16);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now + idx * 0.12);
+                osc.stop(now + idx * 0.12 + 0.18);
+            });
+        } else if (id === 'D') {
+            // External electronic keypad door lock beep
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(1400, now);
+            osc.frequency.setValueAtTime(880, now + 0.16);
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.linearRampToValueAtTime(0.18, now + 0.3);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.45);
+        }
+    } catch (e) {
+        console.warn('Audio synthesis error:', e);
+    }
+};
 
 export default function ParrotInspection({ onClose, onEvidenceFound, evidenceItems = [] }) {
-    const [view, setView] = useState('inspect'); // inspect | audio | autopsy
-    const [inspectedSections, setInspectedSections] = useState([]);
-    const [audioFragments, setAudioFragments] = useState([
-        { id: 'C', text: 'Parrot panic sounds' },
-        { id: 'A', text: 'Eliza counting petals ("13... 21... 34...")' },
-        { id: 'D', text: 'Door lock beep' },
-        { id: 'B', text: 'Low humming vibration' }
-    ]);
-    const [draggedIdx, setDraggedIdx] = useState(null);
-    const [audioSolved, setAudioSolved] = useState(evidenceItems.includes('parrot-timeline'));
-    const [scanline, setScanline] = useState(true);
+    const [view, setView] = useState('audio'); // Default directly to audio for instant accessibility
+    const [inspectedSections, setInspectedSections] = useState(['feathers', 'nest', 'cage']);
+    
+    // Ordered array of fragment IDs currently in Slots 1, 2, 3, 4
+    const [orderedSlots, setOrderedSlots] = useState(['C', 'A', 'D', 'B']);
+    const [audioSolved, setAudioSolved] = useState(() => evidenceItems.includes('parrot-timeline'));
+    const [feedbackMsg, setFeedbackMsg] = useState(null);
+    const playTimerRef = useRef(null);
 
-    const isAllInspected = inspectedSections.includes('feathers') && inspectedSections.includes('nest') && inspectedSections.includes('cage');
-
+    // Physical exam inspection
     const handleInspect = (section) => {
         if (!inspectedSections.includes(section)) {
             const newSections = [...inspectedSections, section];
@@ -26,31 +125,108 @@ export default function ParrotInspection({ onClose, onEvidenceFound, evidenceIte
         }
     };
 
-    const handleDragStart = (e, idx) => {
-        setDraggedIdx(idx);
-        e.dataTransfer.effectAllowed = "move";
-    };
-
-    const handleDragOver = (e, idx) => {
-        e.preventDefault();
-    };
-
-    const handleDrop = (e, targetIdx) => {
-        e.preventDefault();
-        if (draggedIdx === null || draggedIdx === targetIdx) return;
-
-        const newArr = [...audioFragments];
-        const temp = newArr[draggedIdx];
-        newArr[draggedIdx] = newArr[targetIdx];
-        newArr[targetIdx] = temp;
-        setAudioFragments(newArr);
-        setDraggedIdx(null);
-
-        const currentOrder = newArr.map(f => f.id).join('');
-        if (currentOrder === 'ABCD') {
+    // Verification logic
+    const checkOrder = useCallback((slots) => {
+        const orderStr = slots.join('');
+        if (orderStr === 'ABCD') {
             setAudioSolved(true);
+            setFeedbackMsg({
+                type: 'success',
+                text: '✓ TIMELINE RECONSTRUCTION VERIFIED: 1. Eliza Counting -> 2. Low Hum -> 3. Shuk Panic -> 4. Keypad Lock Beep.'
+            });
             onEvidenceFound('parrot-timeline');
+            return true;
+        } else {
+            setFeedbackMsg({
+                type: 'warning',
+                text: 'Incorrect chronology. Clue: Eliza began measuring in silence. The low-frequency acoustic hum startled the bird, and Carl locked the door last.'
+            });
+            return false;
         }
+    }, [onEvidenceFound]);
+
+    // Direct Dropdown Selection: Slot `slotIndex` selects fragment `targetId`
+    const handleSelectSlotFragment = (slotIndex, targetId) => {
+        const currentSlots = [...orderedSlots];
+        const existingSlotForTarget = currentSlots.indexOf(targetId);
+
+        if (existingSlotForTarget !== -1) {
+            // Swap to maintain distinct events in each slot
+            const displaced = currentSlots[slotIndex];
+            currentSlots[slotIndex] = targetId;
+            currentSlots[existingSlotForTarget] = displaced;
+        } else {
+            currentSlots[slotIndex] = targetId;
+        }
+
+        setOrderedSlots(currentSlots);
+        playAudioFragment(targetId);
+
+        if (currentSlots.join('') === 'ABCD') {
+            checkOrder(currentSlots);
+        } else {
+            setFeedbackMsg({
+                type: 'info',
+                text: `Slot #${slotIndex + 1} updated to "${FRAGMENT_DEFINITIONS[targetId]?.name}". Click "VERIFY TIMELINE ORDER" when ready.`
+            });
+        }
+    };
+
+    // Move slot item earlier (Up)
+    const moveSlotUp = (idx) => {
+        if (idx <= 0) return;
+        const newSlots = [...orderedSlots];
+        const temp = newSlots[idx];
+        newSlots[idx] = newSlots[idx - 1];
+        newSlots[idx - 1] = temp;
+        setOrderedSlots(newSlots);
+        if (newSlots.join('') === 'ABCD') {
+            checkOrder(newSlots);
+        }
+    };
+
+    // Move slot item later (Down)
+    const moveSlotDown = (idx) => {
+        if (idx >= orderedSlots.length - 1) return;
+        const newSlots = [...orderedSlots];
+        const temp = newSlots[idx];
+        newSlots[idx] = newSlots[idx + 1];
+        newSlots[idx + 1] = temp;
+        setOrderedSlots(newSlots);
+        if (newSlots.join('') === 'ABCD') {
+            checkOrder(newSlots);
+        }
+    };
+
+    // Deduce / Auto-Solve
+    const handleAutoSolve = () => {
+        const correctSlots = ['A', 'B', 'C', 'D'];
+        setOrderedSlots(correctSlots);
+        checkOrder(correctSlots);
+        // Play full sequence in celebration
+        correctSlots.forEach((id, i) => {
+            setTimeout(() => playAudioFragment(id), i * 600);
+        });
+    };
+
+    // Shuffle / Reset
+    const handleReset = () => {
+        const resetSlots = ['C', 'D', 'A', 'B'];
+        setOrderedSlots(resetSlots);
+        setFeedbackMsg({
+            type: 'info',
+            text: 'Timeline reset. Select the chronological order of events using the selectors below.'
+        });
+    };
+
+    // Play all fragments in their current order
+    const playCurrentSequence = () => {
+        clearTimeout(playTimerRef.current);
+        orderedSlots.forEach((id, idx) => {
+            setTimeout(() => {
+                playAudioFragment(id);
+            }, idx * 1100);
+        });
     };
 
     const handleSendLab = () => {
@@ -60,245 +236,434 @@ export default function ParrotInspection({ onClose, onEvidenceFound, evidenceIte
 
     return (
         <div style={{
-            position: 'fixed', inset: 0, zIndex: 9999,
-            background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)',
+            position: 'fixed', inset: 0, zIndex: 99999,
+            background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(8px)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontFamily: "'Courier New', monospace", color: '#cfcfcf'
         }}>
             <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
                 style={{
-                    width: '850px', maxWidth: '95%', minHeight: '600px',
+                    width: '920px', maxWidth: '96%', maxHeight: '92vh',
                     background: '#0a0a0c', border: '1px solid #d4af37',
-                    boxShadow: '0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(212,175,55,0.1)',
+                    boxShadow: '0 0 50px rgba(0,0,0,0.95), inset 0 0 25px rgba(212,175,55,0.15)',
                     position: 'relative', display: 'flex', flexDirection: 'column',
-                    overflow: 'hidden'
+                    overflow: 'hidden', borderRadius: '4px'
                 }}
             >
-                {/* CRT Scanline Effect */}
-                {scanline && (
-                    <div style={{
-                        position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 50,
-                        background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
-                        opacity: 0.6
-                    }} />
-                )}
-
                 {/* Header */}
                 <div style={{
-                    padding: '20px 30px', borderBottom: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 22px', borderBottom: '1px solid rgba(212,175,55,0.3)',
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    background: 'rgba(212,175,55,0.05)'
+                    background: 'rgba(212,175,55,0.08)'
                 }}>
                     <div>
-                        <div style={{ fontSize: '0.75rem', color: '#d4af37', letterSpacing: '0.2em', marginBottom: '4px' }}>EVIDENCE OBJECT: ANIMAL WITNESS</div>
-                        <h2 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Shuk – Amazon Parrot</h2>
+                        <div style={{ fontSize: '0.68rem', color: '#d4af37', letterSpacing: '0.2em' }}>
+                            ANIMAL WITNESS TELEMETRY · CASE FILE DAI-004
+                        </div>
+                        <h2 style={{ fontSize: '1.25rem', margin: 0, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                            SHUK THE PARROT — AUDIO MEMORY FORENSICS
+                        </h2>
                     </div>
                     <button
                         onClick={onClose}
-                        style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#fff', padding: '8px 16px', cursor: 'pointer', fontFamily: "'Courier New', monospace" }}
+                        style={{
+                            background: 'transparent',
+                            border: '1px solid rgba(255,255,255,0.3)',
+                            color: '#fff', padding: '6px 14px', cursor: 'pointer',
+                            fontFamily: 'inherit', fontSize: '0.75rem', borderRadius: '2px'
+                        }}
                     >
                         ✕ CLOSE PANEL
                     </button>
                 </div>
 
                 {/* Main Content Area */}
-                <div style={{ display: 'flex', flex: 1 }}>
-                    {/* Left Sidebar - Navigation/Status */}
-                    <div style={{ width: '220px', borderRight: '1px solid rgba(212,175,55,0.2)', padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                        <img src="/scenes/shuk_parrot.png" alt="Shuk the Parrot" style={{ width: '100%', border: '1px solid #444', filter: 'grayscale(0.8)', background: '#111', minHeight: '150px' }} />
-                        <div style={{ fontSize: '0.8rem', lineHeight: '1.5' }}>
-                            <strong style={{ color: '#d4af37' }}>Condition:</strong> Deceased<br />
-                            <strong style={{ color: '#d4af37' }}>Location:</strong> Near daisy spiral
+                <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+                    {/* Left Sidebar */}
+                    <div style={{ width: '220px', borderRight: '1px solid rgba(212,175,55,0.2)', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'rgba(0,0,0,0.4)' }}>
+                        <img src="/scenes/shuk_parrot.png" alt="Shuk" style={{ width: '100%', border: '1px solid #444', filter: 'grayscale(0.7)', background: '#111', height: '120px', objectFit: 'cover' }} />
+                        <div style={{ fontSize: '0.72rem', lineHeight: '1.5' }}>
+                            <strong style={{ color: '#d4af37' }}>Specimen:</strong> Amazon Parrot<br />
+                            <strong style={{ color: '#d4af37' }}>Location:</strong> Sanctuary Dome Floor<br />
+                            <strong style={{ color: '#d4af37' }}>Memory Status:</strong>{' '}
+                            <span style={{ color: audioSolved ? '#2ecc71' : '#f39c12' }}>
+                                {audioSolved ? 'DECRYPTED ✓' : 'AWAITING SEQUENCE'}
+                            </span>
                         </div>
-                        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <button
-                                onClick={() => setView('inspect')}
-                                style={{ padding: '10px', background: view === 'inspect' ? 'rgba(212,175,55,0.2)' : 'transparent', border: `1px solid ${view === 'inspect' ? '#d4af37' : '#444'}`, color: view === 'inspect' ? '#fff' : '#888', cursor: 'pointer', textAlign: 'left' }}
-                            >
-                                🔍 INSPECTION
-                            </button>
+
+                        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             <button
                                 onClick={() => setView('audio')}
-                                disabled={!isAllInspected && !evidenceItems.includes('parrot-timeline')}
-                                style={{ padding: '10px', background: view === 'audio' ? 'rgba(212,175,55,0.2)' : 'transparent', border: `1px solid ${view === 'audio' ? '#d4af37' : '#444'}`, color: (!isAllInspected && !evidenceItems.includes('parrot-timeline')) ? '#333' : (view === 'audio' ? '#fff' : '#888'), cursor: (!isAllInspected && !evidenceItems.includes('parrot-timeline')) ? 'not-allowed' : 'pointer', textAlign: 'left' }}
+                                style={{
+                                    padding: '8px 12px',
+                                    background: view === 'audio' ? 'rgba(212,175,55,0.25)' : 'transparent',
+                                    border: `1px solid ${view === 'audio' ? '#d4af37' : '#444'}`,
+                                    color: view === 'audio' ? '#dfd8a3' : '#888',
+                                    cursor: 'pointer', textAlign: 'left', fontSize: '0.75rem', fontWeight: 'bold'
+                                }}
                             >
-                                🎧 AUDIO MEMORY
+                                🎧 AUDIO MEMORY {audioSolved ? '✓' : ''}
                             </button>
                             <button
-                                onClick={() => view !== 'autopsy' && handleSendLab()}
-                                disabled={!audioSolved}
-                                style={{ padding: '10px', background: view === 'autopsy' ? 'rgba(212,175,55,0.2)' : 'transparent', border: `1px solid ${view === 'autopsy' ? '#d4af37' : '#444'}`, color: !audioSolved ? '#333' : (view === 'autopsy' ? '#fff' : '#888'), cursor: !audioSolved ? 'not-allowed' : 'pointer', textAlign: 'left' }}
+                                onClick={() => setView('inspect')}
+                                style={{
+                                    padding: '8px 12px',
+                                    background: view === 'inspect' ? 'rgba(212,175,55,0.25)' : 'transparent',
+                                    border: `1px solid ${view === 'inspect' ? '#d4af37' : '#444'}`,
+                                    color: view === 'inspect' ? '#dfd8a3' : '#888',
+                                    cursor: 'pointer', textAlign: 'left', fontSize: '0.75rem'
+                                }}
+                            >
+                                🔍 PHYSICAL EXAM
+                            </button>
+                            <button
+                                onClick={handleSendLab}
+                                style={{
+                                    padding: '8px 12px',
+                                    background: view === 'autopsy' ? 'rgba(212,175,55,0.25)' : 'transparent',
+                                    border: `1px solid ${view === 'autopsy' ? '#d4af37' : '#444'}`,
+                                    color: view === 'autopsy' ? '#dfd8a3' : (audioSolved ? '#aaa' : '#555'),
+                                    cursor: 'pointer', textAlign: 'left', fontSize: '0.75rem'
+                                }}
                             >
                                 🧪 LAB AUTOPSY
                             </button>
                         </div>
                     </div>
 
-                    {/* Right Content */}
-                    <div style={{ flex: 1, padding: '30px', overflowY: 'auto', position: 'relative' }}>
+                    {/* Right Interactive Body */}
+                    <div style={{ flex: 1, padding: '20px 24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
 
-                        {/* VIEW 1: INSPECTION */}
-                        {view === 'inspect' && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                <h3 style={{ borderBottom: '1px dashed #444', paddingBottom: '10px', color: '#d4af37' }}>PHYSICAL INSPECTION PROTOCOL</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
-
-                                    {/* Feathers */}
-                                    <div style={{ border: '1px solid #333', padding: '15px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                            <strong style={{ fontSize: '1.1rem', color: '#fff' }}>[ Examine Feathers ]</strong>
-                                            {!inspectedSections.includes('feathers') ? (
-                                                <button onClick={() => handleInspect('feathers')} style={{ padding: '6px 12px', background: '#333', border: '1px solid #555', color: '#cfcfcf', cursor: 'pointer' }}>INSPECT</button>
-                                            ) : (
-                                                <span style={{ color: '#4a9a6a', fontSize: '0.8rem', border: '1px solid #4a9a6a', padding: '4px 8px' }}>COMPLETED</span>
-                                            )}
-                                        </div>
-                                        {inspectedSections.includes('feathers') && (
-                                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                                <div style={{ color: '#ff4444', marginBottom: '5px' }}>► CLUE DISCOVERED</div>
-                                                Feathers are violently ruffled. Deep claw marks cover the nearby floor. <br />
-                                                <strong>Interpretation:</strong> The bird was in a state of extreme panic immediately prior to death.
-                                            </motion.div>
-                                        )}
-                                    </div>
-
-                                    {/* Nesting Cavity */}
-                                    <div style={{ border: '1px solid #333', padding: '15px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                            <strong style={{ fontSize: '1.1rem', color: '#fff' }}>[ Check Nesting Cavity ]</strong>
-                                            {!inspectedSections.includes('nest') ? (
-                                                <button onClick={() => handleInspect('nest')} style={{ padding: '6px 12px', background: '#333', border: '1px solid #555', color: '#cfcfcf', cursor: 'pointer' }}>INSPECT</button>
-                                            ) : (
-                                                <span style={{ color: '#4a9a6a', fontSize: '0.8rem', border: '1px solid #4a9a6a', padding: '4px 8px' }}>COMPLETED</span>
-                                            )}
-                                        </div>
-                                        {inspectedSections.includes('nest') && (
-                                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                                <div style={{ color: '#ff4444', marginBottom: '5px' }}>► EVIDENCE SECURED</div>
-                                                Hidden deep within the wood shavings are tiny, tightly wrapped wax packets containing uncut diamonds. <br />
-                                                <strong>Log Updated:</strong> Added "Diamond Smuggling". Suspect Link: Carl.
-                                            </motion.div>
-                                        )}
-                                    </div>
-
-                                    {/* Cage Environment */}
-                                    <div style={{ border: '1px solid #333', padding: '15px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                            <strong style={{ fontSize: '1.1rem', color: '#fff' }}>[ Analyze Cage Environment ]</strong>
-                                            {!inspectedSections.includes('cage') ? (
-                                                <button onClick={() => handleInspect('cage')} style={{ padding: '6px 12px', background: '#333', border: '1px solid #555', color: '#cfcfcf', cursor: 'pointer' }}>INSPECT</button>
-                                            ) : (
-                                                <span style={{ color: '#4a9a6a', fontSize: '0.8rem', border: '1px solid #4a9a6a', padding: '4px 8px' }}>COMPLETED</span>
-                                            )}
-                                        </div>
-                                        {inspectedSections.includes('cage') && (
-                                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                                <div style={{ color: '#ff4444', marginBottom: '5px' }}>► ENVIRONMENTAL ANOMALY</div>
-                                                The cage door is slightly open. The fresh food bowl is entirely untouched. <br />
-                                                <strong>Interpretation:</strong> The bird refused to eat and attempted to flee. Something highly distressing occurred inside the dome.
-                                            </motion.div>
-                                        )}
-                                    </div>
-
-                                    {isAllInspected && (
-                                        <div style={{ textAlign: 'center', marginTop: '10px', color: '#d4af37', fontSize: '0.85rem' }}>
-                                            [ ALL PHYSICAL INSPECTIONS COMPLETE. AUDIO MEMORY UNLOCKED. ]
-                                        </div>
-                                    )}
-                                </div>
-                            </motion.div>
-                        )}
-
-                        {/* VIEW 2: AUDIO TIMELINE PUZZLE */}
+                        {/* ─────────────────────────────────────────────────────────────
+                           VIEW: AUDIO MEMORY RECONSTRUCTION
+                        ───────────────────────────────────────────────────────────── */}
                         {view === 'audio' && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                <h3 style={{ borderBottom: '1px dashed #444', paddingBottom: '10px', color: '#d4af37', display: 'flex', justifyContent: 'space-between' }}>
-                                    <span>AUDIO FORENSICS RECONSTRUCTION</span>
-                                    {audioSolved && <span style={{ color: '#4a9a6a', fontSize: '0.8rem', border: '1px solid #4a9a6a', padding: '4px 8px', letterSpacing: '0.1em' }}>DECRYPTED</span>}
-                                </h3>
-                                <p style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: '25px' }}>
-                                    Parrots perfectly mimic ambient sounds from their environment. We have extracted neural audio fragments from Shuk's recent memory. <br /><strong style={{ color: '#fff' }}>Objective:</strong> Drag and drop to reconstruct the exact timeline of the murder.
-                                </p>
-
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                    {audioFragments.map((frag, idx) => (
-                                        <div
-                                            key={frag.id}
-                                            draggable={!audioSolved}
-                                            onDragStart={(e) => handleDragStart(e, idx)}
-                                            onDragOver={(e) => handleDragOver(e, idx)}
-                                            onDrop={(e) => handleDrop(e, idx)}
+                            <div>
+                                <div style={{ borderBottom: '1px dashed rgba(212,175,55,0.3)', paddingBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <h3 style={{ color: '#d4af37', margin: 0, fontSize: '0.98rem', letterSpacing: '0.12em' }}>
+                                        CHRONOLOGICAL SEQUENCE SELECTOR
+                                    </h3>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <button
+                                            onClick={handleAutoSolve}
                                             style={{
-                                                border: `1px solid ${audioSolved ? '#4a9a6a' : (draggedIdx === idx ? '#d4af37' : '#555')}`,
-                                                background: audioSolved ? 'rgba(74,154,106,0.1)' : 'rgba(0,0,0,0.6)',
-                                                padding: '15px 20px',
-                                                display: 'flex', alignItems: 'center', gap: '15px',
-                                                cursor: audioSolved ? 'default' : 'grab',
-                                                opacity: draggedIdx === idx ? 0.5 : 1
+                                                background: 'rgba(212,175,55,0.15)',
+                                                border: '1px solid #d4af37',
+                                                color: '#dfd8a3',
+                                                fontSize: '0.68rem',
+                                                padding: '4px 10px',
+                                                cursor: 'pointer',
+                                                fontFamily: 'inherit'
+                                            }}
+                                            title="Automatically arrange fragments in true chronological order"
+                                        >
+                                            ⚡ DEDUCE ORDER (AUTO-SOLVE)
+                                        </button>
+                                        <button
+                                            onClick={handleReset}
+                                            style={{
+                                                background: 'transparent',
+                                                border: '1px solid #666',
+                                                color: '#aaa',
+                                                fontSize: '0.68rem',
+                                                padding: '4px 10px',
+                                                cursor: 'pointer',
+                                                fontFamily: 'inherit'
                                             }}
                                         >
-                                            <div style={{ fontSize: '1.5rem', color: audioSolved ? '#4a9a6a' : '#555' }}>↕</div>
-                                            <div style={{ flex: 1, fontSize: '1rem', color: audioSolved ? '#fff' : '#ddd' }}>
-                                                {frag.text}
+                                            ↺ RESET
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <p style={{ fontSize: '0.78rem', color: '#aaa', margin: '10px 0', lineHeight: 1.5 }}>
+                                    Select which sound occurred in each chronological slot from the dropdowns below, or use the <strong>[▲] / [▼]</strong> shift arrows.
+                                </p>
+
+                                {/* Feedback notification */}
+                                {feedbackMsg && (
+                                    <div style={{
+                                        padding: '8px 12px',
+                                        background: feedbackMsg.type === 'success' ? 'rgba(46,204,113,0.15)' : 'rgba(241,196,15,0.12)',
+                                        border: `1px solid ${feedbackMsg.type === 'success' ? '#2ecc71' : '#f1c40f'}`,
+                                        color: feedbackMsg.type === 'success' ? '#2ecc71' : '#f1c40f',
+                                        fontSize: '0.74rem',
+                                        borderRadius: '2px',
+                                        marginBottom: '10px'
+                                    }}>
+                                        {feedbackMsg.text}
+                                    </div>
+                                )}
+
+                                {/* 4 Explicit Chronological Slots with Dropdowns */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    {[0, 1, 2, 3].map((slotIdx) => {
+                                        const fragmentId = orderedSlots[slotIdx];
+                                        const def = FRAGMENT_DEFINITIONS[fragmentId];
+                                        const slotLabels = ['1ST EVENT (EARLIEST)', '2ND EVENT', '3RD EVENT', '4TH EVENT (FINAL)'];
+
+                                        return (
+                                            <div
+                                                key={slotIdx}
+                                                style={{
+                                                    background: audioSolved ? 'rgba(46, 204, 113, 0.06)' : 'rgba(15, 12, 10, 0.85)',
+                                                    border: `1px solid ${audioSolved ? '#2ecc71' : '#b78f2f'}`,
+                                                    padding: '12px 14px',
+                                                    borderRadius: '3px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '12px'
+                                                }}
+                                            >
+                                                {/* Slot Badge */}
+                                                <div style={{
+                                                    minWidth: '105px',
+                                                    background: audioSolved ? '#2ecc71' : '#b78f2f',
+                                                    color: '#0d0a08',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '0.68rem',
+                                                    letterSpacing: '0.1em',
+                                                    padding: '5px 8px',
+                                                    textAlign: 'center',
+                                                    borderRadius: '2px'
+                                                }}>
+                                                    {slotLabels[slotIdx]}
+                                                </div>
+
+                                                {/* Native Dropdown Selector for this slot */}
+                                                <div style={{ flex: 1 }}>
+                                                    <select
+                                                        value={fragmentId}
+                                                        onChange={(e) => handleSelectSlotFragment(slotIdx, e.target.value)}
+                                                        style={{
+                                                            width: '100%',
+                                                            background: '#060504',
+                                                            border: '1px solid rgba(183, 143, 47, 0.5)',
+                                                            color: '#dfd8a3',
+                                                            padding: '7px 10px',
+                                                            fontSize: '0.82rem',
+                                                            fontFamily: "'Courier New', monospace",
+                                                            cursor: 'pointer',
+                                                            borderRadius: '2px'
+                                                        }}
+                                                    >
+                                                        {Object.values(FRAGMENT_DEFINITIONS).map(frag => (
+                                                            <option key={frag.id} value={frag.id}>
+                                                                {frag.name} — ({frag.soundDesc})
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                    <div style={{ fontSize: '0.65rem', color: '#8c7e62', marginTop: '3px' }}>
+                                                        {def?.toneInfo}
+                                                    </div>
+                                                </div>
+
+                                                {/* Audio Preview Button */}
+                                                <button
+                                                    onClick={() => playAudioFragment(fragmentId)}
+                                                    style={{
+                                                        background: 'rgba(52, 152, 219, 0.15)',
+                                                        border: '1px solid #3498db',
+                                                        color: '#5dade2',
+                                                        padding: '6px 12px',
+                                                        fontSize: '0.7rem',
+                                                        cursor: 'pointer',
+                                                        fontFamily: 'inherit',
+                                                        borderRadius: '2px'
+                                                    }}
+                                                    title="Listen to this event sound"
+                                                >
+                                                    ▶ LISTEN
+                                                </button>
+
+                                                {/* Step Reorder Arrows */}
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                                    <button
+                                                        onClick={() => moveSlotUp(slotIdx)}
+                                                        disabled={slotIdx === 0}
+                                                        style={{
+                                                            padding: '2px 8px',
+                                                            background: slotIdx === 0 ? 'transparent' : 'rgba(255,255,255,0.1)',
+                                                            color: slotIdx === 0 ? '#444' : '#fff',
+                                                            border: '1px solid #555',
+                                                            cursor: slotIdx === 0 ? 'not-allowed' : 'pointer',
+                                                            fontSize: '0.65rem'
+                                                        }}
+                                                        title="Shift Earlier"
+                                                    >
+                                                        ▲
+                                                    </button>
+                                                    <button
+                                                        onClick={() => moveSlotDown(slotIdx)}
+                                                        disabled={slotIdx === 3}
+                                                        style={{
+                                                            padding: '2px 8px',
+                                                            background: slotIdx === 3 ? 'transparent' : 'rgba(255,255,255,0.1)',
+                                                            color: slotIdx === 3 ? '#444' : '#fff',
+                                                            border: '1px solid #555',
+                                                            cursor: slotIdx === 3 ? 'not-allowed' : 'pointer',
+                                                            fontSize: '0.65rem'
+                                                        }}
+                                                        title="Shift Later"
+                                                    >
+                                                        ▼
+                                                    </button>
+                                                </div>
                                             </div>
-                                            {audioSolved && (
-                                                <div style={{ fontSize: '0.75rem', color: '#4a9a6a' }}>T + 00:0{idx}</div>
-                                            )}
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Bottom Sequence Controls */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px' }}>
+                                    <button
+                                        onClick={playCurrentSequence}
+                                        style={{
+                                            background: 'transparent',
+                                            border: '1px solid rgba(183,143,47,0.4)',
+                                            color: '#d4af37',
+                                            padding: '8px 14px',
+                                            fontSize: '0.74rem',
+                                            cursor: 'pointer',
+                                            fontFamily: 'inherit',
+                                            borderRadius: '2px'
+                                        }}
+                                    >
+                                        ▶ PLAY SEQUENCE IN ORDER (1 → 4)
+                                    </button>
+
+                                    <button
+                                        onClick={() => checkOrder(orderedSlots)}
+                                        style={{
+                                            background: 'linear-gradient(to bottom, #725624, #3d2d11)',
+                                            border: '1px solid #b78f2f',
+                                            color: '#dfd8a3',
+                                            padding: '8px 20px',
+                                            fontSize: '0.8rem',
+                                            fontWeight: 'bold',
+                                            cursor: 'pointer',
+                                            fontFamily: 'inherit',
+                                            borderRadius: '2px'
+                                        }}
+                                    >
+                                        ✓ VERIFY &amp; CONFIRM ORDER
+                                    </button>
                                 </div>
 
                                 {audioSolved && (
-                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: '30px', padding: '15px', border: '1px solid #4a9a6a', background: 'rgba(74,154,106,0.1)', color: '#fff', fontSize: '0.9rem' }}>
-                                        <strong>TIMELINE RECONSTRUCTION SUCCESSFUL.</strong><br />
-                                        Eliza was studying the daisies (counting petals) when an aggressive low-frequency vibration began, causing the parrot to panic. Soon after, the door lock beeped.
-                                        <div style={{ marginTop: '10px' }}>
-                                            <strong style={{ color: '#d4af37' }}>→ Note: Sending body to the lab for autopsy may reveal cause of death.</strong>
-                                        </div>
-                                    </motion.div>
+                                    <div style={{ marginTop: '12px', padding: '10px 14px', border: '1px solid #2ecc71', background: 'rgba(46,204,113,0.1)', color: '#fff', fontSize: '0.8rem', lineHeight: 1.5, borderRadius: '2px' }}>
+                                        <strong style={{ color: '#2ecc71' }}>CHRONOLOGICAL DECRYPTION CONFIRMED:</strong><br />
+                                        1. <strong>16:30</strong> — Eliza counted daisy petals ("13... 21... 34...").<br />
+                                        2. <strong>17:00</strong> — Pre-set subwoofers emitted the 19Hz infrasound wave.<br />
+                                        3. <strong>17:02</strong> — Shuk panicked and screeched in severe distress.<br />
+                                        4. <strong>17:05</strong> — Keypad solenoid lock beeped, sealing the exit.
+                                    </div>
                                 )}
-                            </motion.div>
+                            </div>
                         )}
 
-                        {/* VIEW 3: AUTOPSY */}
+                        {/* ─────────────────────────────────────────────────────────────
+                           VIEW: PHYSICAL EXAM
+                        ───────────────────────────────────────────────────────────── */}
+                        {view === 'inspect' && (
+                            <div>
+                                <h3 style={{ borderBottom: '1px dashed #444', paddingBottom: '8px', color: '#d4af37', margin: 0, fontSize: '0.98rem' }}>
+                                    PHYSICAL EXAM PROTOCOL
+                                </h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
+                                    <div style={{ border: '1px solid #333', padding: '10px 14px', background: 'rgba(0,0,0,0.4)', borderRadius: '3px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <strong style={{ color: '#fff', fontSize: '0.85rem' }}>Feathers &amp; Talons</strong>
+                                            <button onClick={() => handleInspect('feathers')} style={{ padding: '4px 10px', background: '#333', border: '1px solid #555', color: '#cfcfcf', cursor: 'pointer', fontSize: '0.7rem' }}>INSPECT</button>
+                                        </div>
+                                        {inspectedSections.includes('feathers') && (
+                                            <div style={{ color: '#aaa', fontSize: '0.76rem', marginTop: '6px' }}>
+                                                Feathers ruffled violently; floor tiles show deep stress claw marks.
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div style={{ border: '1px solid #333', padding: '10px 14px', background: 'rgba(0,0,0,0.4)', borderRadius: '3px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <strong style={{ color: '#fff', fontSize: '0.85rem' }}>Nesting Box False Bottom</strong>
+                                            <button onClick={() => handleInspect('nest')} style={{ padding: '4px 10px', background: '#333', border: '1px solid #555', color: '#cfcfcf', cursor: 'pointer', fontSize: '0.7rem' }}>INSPECT</button>
+                                        </div>
+                                        {inspectedSections.includes('nest') && (
+                                            <div style={{ color: '#aaa', fontSize: '0.76rem', marginTop: '6px' }}>
+                                                Wax packets discovered containing uncut contraband diamonds. Suspect link: Carl.
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div style={{ border: '1px solid #333', padding: '10px 14px', background: 'rgba(0,0,0,0.4)', borderRadius: '3px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <strong style={{ color: '#fff', fontSize: '0.85rem' }}>Cage Environment &amp; Door</strong>
+                                            <button onClick={() => handleInspect('cage')} style={{ padding: '4px 10px', background: '#333', border: '1px solid #555', color: '#cfcfcf', cursor: 'pointer', fontSize: '0.7rem' }}>INSPECT</button>
+                                        </div>
+                                        {inspectedSections.includes('cage') && (
+                                            <div style={{ color: '#aaa', fontSize: '0.76rem', marginTop: '6px' }}>
+                                                Cage door slightly ajar; fresh fruit bowl untouched.
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <button
+                                        onClick={() => setView('audio')}
+                                        style={{
+                                            background: 'linear-gradient(to bottom, #725624, #3d2d11)',
+                                            border: '1px solid #b78f2f',
+                                            color: '#dfd8a3',
+                                            padding: '8px 16px',
+                                            fontSize: '0.76rem',
+                                            cursor: 'pointer',
+                                            fontFamily: 'inherit',
+                                            marginTop: '8px',
+                                            alignSelf: 'flex-start'
+                                        }}
+                                    >
+                                        OPEN AUDIO MEMORY RECONSTRUCTION →
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* ─────────────────────────────────────────────────────────────
+                           VIEW: LAB AUTOPSY
+                        ───────────────────────────────────────────────────────────── */}
                         {view === 'autopsy' && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                <h3 style={{ borderBottom: '1px dashed #444', paddingBottom: '10px', color: '#d4af37' }}>LABORATORY AUTOPSY REPORT: SHUK</h3>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
-                                    <div style={{ border: '1px solid #333', padding: '15px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px' }}>
-                                        <h4 style={{ color: '#fff', borderBottom: '1px solid #555', paddingBottom: '5px', marginTop: 0 }}>EXTERNAL EXAM</h4>
-                                        <ul style={{ color: '#aaa', fontSize: '0.85rem', paddingLeft: '20px', margin: 0 }}>
-                                            <li>No defensive wounds.</li>
-                                            <li>No bone fractures.</li>
-                                            <li>No superficial evidence of poison.</li>
+                            <div>
+                                <h3 style={{ borderBottom: '1px dashed #444', paddingBottom: '8px', color: '#d4af37', margin: 0, fontSize: '0.98rem' }}>
+                                    LAB AUTOPSY PROTOCOL: SHUK
+                                </h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '12px' }}>
+                                    <div style={{ border: '1px solid #333', padding: '12px', background: 'rgba(0,0,0,0.4)', borderRadius: '3px' }}>
+                                        <strong style={{ color: '#fff', fontSize: '0.82rem' }}>ANATOMICAL EXAM</strong>
+                                        <ul style={{ color: '#aaa', fontSize: '0.72rem', paddingLeft: '16px', margin: '6px 0 0 0', lineHeight: 1.6 }}>
+                                            <li>No defensive wounds or bone fractures.</li>
+                                            <li>Zero external blunt trauma.</li>
+                                            <li>Crop contains pure seeds; no systemic toxins.</li>
                                         </ul>
                                     </div>
-                                    <div style={{ border: '1px solid #333', padding: '15px', background: 'rgba(0,0,0,0.4)', borderRadius: '4px' }}>
-                                        <h4 style={{ color: '#fff', borderBottom: '1px solid #555', paddingBottom: '5px', marginTop: 0 }}>INTERNAL EXAM & TOXICOLOGY</h4>
-                                        <ul style={{ color: '#aaa', fontSize: '0.85rem', paddingLeft: '20px', margin: 0 }}>
-                                            <li>Severe lung oxygen deprivation.</li>
-                                            <li>Massive cardiac stress.</li>
-                                            <li><strong style={{ color: '#ff4444' }}>Deep inner-ear vibration trauma.</strong></li>
-                                            <li>Trace tobacco particles; 0 toxins.</li>
+                                    <div style={{ border: '1px solid #333', padding: '12px', background: 'rgba(0,0,0,0.4)', borderRadius: '3px' }}>
+                                        <strong style={{ color: '#fff', fontSize: '0.82rem' }}>TOXICOLOGY &amp; HISTOLOGY</strong>
+                                        <ul style={{ color: '#aaa', fontSize: '0.72rem', paddingLeft: '16px', margin: '6px 0 0 0', lineHeight: 1.6 }}>
+                                            <li>Severe lung oxygen deprivation (hypoxia).</li>
+                                            <li>Massive acute myocardial strain.</li>
+                                            <li><strong style={{ color: '#ff6666' }}>Inner-ear otolithic shear from 19Hz resonance.</strong></li>
                                         </ul>
                                     </div>
                                 </div>
-                                <div style={{ marginTop: '20px', border: '1px solid #d4af37', padding: '20px', background: 'rgba(212,175,55,0.1)' }}>
-                                    <h4 style={{ color: '#d4af37', margin: '0 0 10px 0' }}>MEDICAL EXAMINER'S CONCLUSION</h4>
-                                    <div style={{ color: '#fff', fontSize: '0.95rem', lineHeight: '1.6' }}>
-                                        <strong>Cause of Death:</strong> Environmental stress resulting from sustained extreme low-frequency vibration and rapid oxygen deprivation.<br /><br />
-                                        <em style={{ color: '#aaa', fontSize: '0.85rem' }}>"Detective, something vibrated the air so violently that it literally shook the life out of this animal. You're looking for an infrasonic source."</em>
-                                    </div>
-                                    <div style={{ marginTop: '15px', fontSize: '0.8rem', color: '#ff4444', background: 'rgba(255,68,68,0.1)', padding: '8px', border: '1px solid #ff4444' }}>
-                                        ► EVIDENCE LINK ESTABLISHED: Vent Speakers → Infrasound → Parrot Death → Suspect: Kye
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
 
+                                <div style={{ marginTop: '12px', padding: '12px', border: '1px solid #d4af37', background: 'rgba(212,175,55,0.08)', borderRadius: '2px' }}>
+                                    <strong style={{ color: '#d4af37', fontSize: '0.8rem' }}>CORONER CONCLUSION:</strong>
+                                    <p style={{ color: '#cfcfcf', fontSize: '0.75rem', lineHeight: 1.5, margin: '4px 0 0 0' }}>
+                                        Cause of death: Acute cardiovascular collapse caused by low-frequency standing acoustic waves (19Hz) inside a sealed enclosure. Exactly matches the fatal mechanism documented in Eliza D'Souza's autopsy.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </motion.div>

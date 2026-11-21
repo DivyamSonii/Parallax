@@ -36,16 +36,19 @@ const EvidenceBoard = ({ evidence = [], onOpen }) => {
         if (newItems.length === 0) return;
         const newAnim = {};
         newItems.forEach(e => { newAnim[e.id] = true; });
-        setAnimating(prev => ({ ...prev, ...newAnim }));
+        const t1 = setTimeout(() => setAnimating(prev => ({ ...prev, ...newAnim })), 0);
         // Remove animation flags after animation completes
-        const t = setTimeout(() => {
+        const t2 = setTimeout(() => {
             setAnimating(prev => {
                 const next = { ...prev };
                 newItems.forEach(e => { delete next[e.id]; });
                 return next;
             });
         }, 1400);
-        return () => clearTimeout(t);
+        return () => {
+            clearTimeout(t1);
+            clearTimeout(t2);
+        };
     }, [evidence]);
 
     const handleClick = (e, id) => {

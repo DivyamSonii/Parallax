@@ -28,6 +28,26 @@ FALLBACK = {
         "alone": "I close those vents to feel less alone. That is — I'm sorry. I'm so sorry.",
         "sorry": "I didn't know she was inside... I thought I was just keeping her mother a little longer with me. God forgive me."
     },
+        "intents": {
+        "alibi": "Where was I yesterday evening? In the garden... I walked down toward the glass dome around twilight, yes. I had my pipe. I sat on the iron bench outside, looking at Miriam's birds. Then the chill came on, and I went inside to sit by the library hearth.",
+        "relationship": "Eliza had her grandmother Miriam's eyes and my curiosity. She was always measuring things—petals, pebbles, seeds. I bought her her first microscope when she was twelve. She was the joy of this old estate. My precious granddaughter.",
+        "motive": "Motive? Everything I built—The Stellar tobacco firm, the gardens, this whole estate—was meant to pass down to Eliza. An old man does not labor for fifty years only to destroy the light of his own lineage. The idea is heartbreaking.",
+        "accusation": "Are you saying I harmed my little girl? How could you... how could anyone think that?! I would have stepped into the grave to spare Eliza! I didn't know she was inside the dome... I swear I didn't know!",
+        "crime_scene": "The sanctuary was Miriam's dream. When Miriam passed, I would sit inside with my pipe. The smoke lingered so pleasantly under the glass when the iron vent levers were closed... It made me feel like Miriam was still sitting beside me.",
+        "procedural": "My memory is like smoke on a windy day, officer. Some hours are clear as crystal, others drift away. Be patient with an old man.",
+    },
+    "role_confusion": {
+        "audio": "Acoustic machinery? No, no, I am a tobacco blender and gardener. Modern gadgets give me a headache. You must speak with Kye.",
+        "keypad": "I have the old code for the maintenance latch, but Carl handles the keypad locks now. He says the new numbers keep out trespassers.",
+        "medical": "I am an old man, Detective. Dr. Menon knows all about medical certificates and post-mortems.",
+    },
+    "off_topic": [
+        "Eh? What did you say, young man? My ears aren't what they were, and my mind drifts today... Did that have something to do with Eliza or the birds?",
+        "I... I don't quite catch your drift. In my day, detectives looked for muddy footprints on the gravel, not riddles like that.",
+        "Miriam always said I drifted away when people were talking. But it seems to me you are the one drifting today, Detective.",
+        "The sanctuary is so silent now without her laughter... What you're asking me won't bring my granddaughter back to life.",
+        "I'm an old man whose family is turning to dust. Speak plainly of Eliza, or let me smoke my pipe in peace.",
+    ],
     "dialogues": {
         "under_pressure": "Please... my head hurts. Eliza was my life. I wouldn't hurt a hair on her head.",
         "breaks": "I closed the vents... I locked the air inside. I wanted to smell Miriam's tobacco... and I choked my own child."

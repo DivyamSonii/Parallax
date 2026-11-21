@@ -363,6 +363,98 @@
     letter-spacing: 0.1em;
 }
 
+.ir-evidence-card.presented {
+    opacity: 0.75;
+    border-color: rgba(183, 143, 47, 0.4);
+    background: rgba(183, 143, 47, 0.05);
+}
+
+.ir-evidence-card.fresh {
+    border-color: rgba(220, 160, 50, 0.7);
+    box-shadow: 0 0 8px rgba(183, 143, 47, 0.2);
+}
+
+.ir-ev-status-badge {
+    font-size: 0.55rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+    font-family: 'Special Elite', monospace;
+    text-transform: uppercase;
+}
+
+.badge-presented {
+    color: #4a9a6a;
+    background: rgba(74, 154, 106, 0.15);
+    border: 1px solid rgba(74, 154, 106, 0.3);
+}
+
+.badge-fresh {
+    color: #dfd8a3;
+    background: rgba(223, 216, 163, 0.15);
+    border: 1px solid rgba(223, 216, 163, 0.3);
+    animation: pulse-badge 2s infinite ease-in-out;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; border-color: #b78f2f; }
+}
+
+/* Suspect Emotional State Badge */
+.ir-state-badge {
+    margin-top: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    font-family: 'Special Elite', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+}
+
+.ir-state-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.state-calm {
+    color: #4a9a6a;
+    background: rgba(74, 154, 106, 0.12);
+    border: 1px solid rgba(74, 154, 106, 0.3);
+}
+.state-calm .ir-state-dot { background: #4a9a6a; }
+
+.state-defensive {
+    color: #d4bc8b;
+    background: rgba(212, 188, 139, 0.12);
+    border: 1px solid rgba(212, 188, 139, 0.3);
+}
+.state-defensive .ir-state-dot { background: #d4bc8b; }
+
+.state-aggressive {
+    color: #e67e22;
+    background: rgba(230, 126, 34, 0.12);
+    border: 1px solid rgba(230, 126, 34, 0.3);
+}
+.state-aggressive .ir-state-dot { background: #e67e22; }
+
+.state-breaking {
+    color: #c94a4a;
+    background: rgba(201, 74, 74, 0.18);
+    border: 1px solid rgba(201, 74, 74, 0.5);
+    animation: pulse-breaking 1.2s infinite ease-in-out;
+}
+.state-breaking .ir-state-dot { background: #c94a4a; }
+
+@keyframes pulse-breaking {
+    0%, 100% { box-shadow: 0 0 5px rgba(201, 74, 74, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(201, 74, 74, 0.7); }
+}
+
 .ir-suspect-selector {
     padding: 1.5rem;
     border-top: 1px solid rgba(183, 143, 47, 0.1);

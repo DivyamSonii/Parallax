@@ -9,13 +9,17 @@ from .rina import RinaAgent
 from .eliot import EliotAgent
 from .menon import MenonAgent
 
+# The Midnight Curator Agents
 from .moretti import MorettiAgent
 from .marcus import MarcusAgent
 from .isabelle import IsabelleAgent
 from .kask import KaskAgent
 from .sophie import SophieAgent
+from .victor import VictorAgent
+from .thomas import ThomasAgent
+from .diane import DianeAgent
 
-# Instantiate singletons
+# Instantiate singletons for Daisy & Fibonacci
 _kye = KyeAgent()
 _waltz = WaltzAgent()
 _carl = CarlAgent()
@@ -27,11 +31,15 @@ _rina = RinaAgent()
 _eliot = EliotAgent()
 _menon = MenonAgent()
 
+# Instantiate singletons for The Midnight Curator
 _moretti = MorettiAgent()
 _marcus = MarcusAgent()
 _isabelle = IsabelleAgent()
 _kask = KaskAgent()
 _sophie = SophieAgent()
+_victor = VictorAgent()
+_thomas = ThomasAgent()
+_diane = DianeAgent()
 
 # Comprehensive registry supporting all ID aliases
 AGENTS_REGISTRY = {
@@ -59,22 +67,38 @@ AGENTS_REGISTRY = {
     # The Midnight Curator characters
     "father_moretti": _moretti,
     "moretti": _moretti,
+    "antonio_moretti": _moretti,
+
     "marcus_chen": _marcus,
     "marcus": _marcus,
-    "isabelle_laurent": _isabelle,
+
     "isabelle_rousseau": _isabelle,
     "isabelle": _isabelle,
-    "kask": _kask,
+    "isabelle_laurent": _isabelle,
+
     "dr_raymond_kask": _kask,
-    "sophie_delacroix": _sophie,
+    "kask": _kask,
+    "raymond_kask": _kask,
+    "viktor_kask": _kask,
+
     "sophie_lin": _sophie,
     "sophie": _sophie,
+    "sophie_delacroix": _sophie,
+
+    "victor_voss": _victor,
+    "victor": _victor,
+
+    "thomas_wade": _thomas,
+    "thomas": _thomas,
+
+    "diane_park": _diane,
+    "diane": _diane,
 }
 
 def get_agent(agent_name):
     if not agent_name:
         return None
-    key = str(agent_name).lower().strip()
+    key = str(agent_name).lower().strip().replace("-", "_")
     return AGENTS_REGISTRY.get(key)
 
 def list_all_agents():
